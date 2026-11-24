@@ -34,6 +34,8 @@ Act 4, Xmas Everywhere: find life in the
 - Available: imagegen2, anim8gen (OpenAI ok), nanogen (Gemini ok), audiogen (ElevenLabs ok), playwright-cli, node, Python + Pillow.
 
 - GitHub preview image: to upload (none set)
+- Published: https://xmaseverywhere.synapticnoise.com (repo zeveck/xmas-everywhere, public; Feedback on, repo set). HTTPS on. In the gallery at the top of synapticnoise.com; plans card: Published.
+- Art sheet: https://synapticnoise.com/plans/xmas-everywhere/art/ (on the plans page; pictures linked from the repo)
 
 ## Phases
 
@@ -44,7 +46,7 @@ Act 4, Xmas Everywhere: find life in the
 - [x] Plans page: card added (Planned), plan files and the design page at https://synapticnoise.com/plans/xmas-everywhere/. Design shared: https://synapticnoise.com/plans/xmas-everywhere/, as a page on the plans page.
 - [x] Art, animation and audio: every asset made (about 230 files), about $17.30 of $30 in all; details in design/ASSETS.md
 - [x] Build: one engine (game/src/rules.js, matches the balance sim within 2% on every rank), four stages on one canvas, shop, cards, locks, finales, six endings with early/cold variants, three save slots, Report a bug (hidden until a repo is set), offline, phone layouts.
-- [ ] Play-test (in progress): 40/40 rank solutions replayed twice with real input (all PASS); text scanner clean at 1280×800, 390×844, 360×640, 844×390, 667×375; first load filmed (title at about 4 s on a slow link, then still); slots, away card, Report a bug, locks/Grip/escalation, all six endings, Back to the choice checked. Whole-game run (New Xmas → Silent Night) and the Act 4 lock-ignorer run going.
-- [ ] Final review (in progress): playtester and bug hunter running.
-- [ ] Polish pass
-- [ ] Wrap up
+- [x] Play-test: 40/40 rank solutions replayed twice with real input on the final rules (80/80 PASS, same end state, within ±15%); the lock-ignorer run (carried locks) reached the Act 4 act-win card with no Switch NOEL Off; text scanner clean at six sizes; first load filmed (title once, then still); touch, two fingers, Cheer Spot (72 px, every aimed tap lands), slots, away card, Report a bug, offline all checked.
+- [x] Final review: playtester and bug hunter; 3 must-fix and 9 should-fix found, all fixed (design/REVIEW_LOG.md); the lock rule got a minimum step (sim 88/88).
+- [x] Polish pass: fresh reviewer at six sizes; 10 findings, all fixed (800×600 shop layout the big one).
+- [x] Wrap up: social card and GitHub preview from the game's art; README with screenshots and the requests; Pages workflow; published; whole game proven in one go (New Xmas to Silent Night, real input, 58:28 at 10 taps/s).
