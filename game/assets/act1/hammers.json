@@ -1,0 +1,49 @@
+{
+ "note": "Pixel coords in each hammer-N-hand.webp (512x512). grip = point on the handle where the fist holds it; head = centre of the head. axisAngle = how far the drawn handle-to-head axis is already rotated clockwise from straight up (hammer-1 is drawn diagonally at ~43 deg; hammers 2-4 are straight, handle down, 0). To make any hammer point straight up (handle down) rotate it by -axisAngle about its grip. Grip sits ~22% of the way from the butt to the head centre on all four; grip-to-head distance: h1 344, h2 316, h3 318, h4 307 px (scale by it to equalise handle length).",
+ "hammers": {
+  "1": {
+   "grip": [
+    124,
+    392
+   ],
+   "head": [
+    360,
+    142
+   ],
+   "axisAngle": 43.3
+  },
+  "2": {
+   "grip": [
+    258,
+    400
+   ],
+   "head": [
+    255,
+    84
+   ],
+   "axisAngle": 0
+  },
+  "3": {
+   "grip": [
+    257,
+    400
+   ],
+   "head": [
+    255,
+    82
+   ],
+   "axisAngle": 0
+  },
+  "4": {
+   "grip": [
+    259,
+    403
+   ],
+   "head": [
+    256,
+    96
+   ],
+   "axisAngle": 0
+  }
+ }
+}

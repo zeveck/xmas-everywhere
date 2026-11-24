@@ -1,0 +1,1226 @@
+{
+ "a2-jobs-A": {
+  "mode": "fit",
+  "fill": 0.88,
+  "items": [
+   {
+    "name": "file-01",
+    "box": [
+     58,
+     51,
+     497,
+     461
+    ],
+    "side": 499,
+    "foot": false
+   },
+   {
+    "name": "file-02",
+    "box": [
+     553,
+     51,
+     996,
+     461
+    ],
+    "side": 503,
+    "foot": false
+   },
+   {
+    "name": "file-03",
+    "box": [
+     1050,
+     51,
+     1490,
+     461
+    ],
+    "side": 500,
+    "foot": false
+   },
+   {
+    "name": "file-04",
+    "box": [
+     59,
+     559,
+     500,
+     971
+    ],
+    "side": 501,
+    "foot": false
+   },
+   {
+    "name": "file-05",
+    "box": [
+     552,
+     559,
+     997,
+     971
+    ],
+    "side": 506,
+    "foot": false
+   },
+   {
+    "name": "file-06",
+    "box": [
+     1052,
+     559,
+     1491,
+     971
+    ],
+    "side": 499,
+    "foot": false
+   }
+  ]
+ },
+ "a2-jobs-B": {
+  "mode": "fit",
+  "fill": 0.88,
+  "items": [
+   {
+    "name": "file-07",
+    "box": [
+     56,
+     60,
+     492,
+     469
+    ],
+    "side": 495,
+    "foot": false
+   },
+   {
+    "name": "file-08",
+    "box": [
+     559,
+     59,
+     996,
+     466
+    ],
+    "side": 497,
+    "foot": false
+   },
+   {
+    "name": "file-09",
+    "box": [
+     1068,
+     58,
+     1503,
+     466
+    ],
+    "side": 494,
+    "foot": false
+   },
+   {
+    "name": "file-10",
+    "box": [
+     53,
+     574,
+     492,
+     964
+    ],
+    "side": 499,
+    "foot": false
+   },
+   {
+    "name": "upg-reading-glasses",
+    "box": [
+     554,
+     638,
+     1018,
+     875
+    ],
+    "side": 527,
+    "foot": false
+   },
+   {
+    "name": "upg-cocoa-thermos",
+    "box": [
+     1125,
+     504,
+     1416,
+     963
+    ],
+    "side": 522,
+    "foot": false
+   }
+  ]
+ },
+ "a2-shop-A": {
+  "mode": "fit",
+  "fill": 0.88,
+  "items": [
+   {
+    "name": "list-elves",
+    "box": [
+     136,
+     24,
+     439,
+     499
+    ],
+    "side": 565,
+    "foot": true
+   },
+   {
+    "name": "window-watchers",
+    "box": [
+     634,
+     15,
+     958,
+     512
+    ],
+    "side": 565,
+    "foot": true
+   },
+   {
+    "name": "letter-carriers",
+    "box": [
+     1098,
+     17,
+     1428,
+     502
+    ],
+    "side": 565,
+    "foot": true
+   },
+   {
+    "name": "elf-field-office",
+    "box": [
+     52,
+     526,
+     523,
+     984
+    ],
+    "side": 565,
+    "foot": true
+   },
+   {
+    "name": "snow-globe-cams",
+    "box": [
+     630,
+     529,
+     988,
+     981
+    ],
+    "side": 565,
+    "foot": true
+   },
+   {
+    "name": "chimney-sensors",
+    "box": [
+     1123,
+     540,
+     1416,
+     982
+    ],
+    "side": 565,
+    "foot": true
+   }
+  ]
+ },
+ "a2-shop-B": {
+  "mode": "fit",
+  "fill": 0.88,
+  "items": [
+   {
+    "name": "sleigh-sats",
+    "box": [
+     62,
+     31,
+     468,
+     465
+    ],
+    "side": 523,
+    "foot": true
+   },
+   {
+    "name": "list-engine",
+    "box": [
+     550,
+     31,
+     1010,
+     491
+    ],
+    "side": 523,
+    "foot": true
+   },
+   {
+    "name": "upg-nice-ribbons",
+    "box": [
+     1059,
+     57,
+     1489,
+     490
+    ],
+    "side": 492,
+    "foot": false
+   },
+   {
+    "name": "upg-pneumatic-tubes",
+    "box": [
+     50,
+     536,
+     495,
+     993
+    ],
+    "side": 519,
+    "foot": false
+   },
+   {
+    "name": "upg-wish-board",
+    "box": [
+     556,
+     562,
+     989,
+     965
+    ],
+    "side": 492,
+    "foot": false
+   },
+   {
+    "name": "upg-second-chances",
+    "box": [
+     1084,
+     559,
+     1505,
+     963
+    ],
+    "side": 478,
+    "foot": false
+   }
+  ]
+ },
+ "a2-stamps": {
+  "mode": "fit",
+  "fill": 0.88,
+  "items": [
+   {
+    "name": "stamp-1",
+    "box": [
+     117,
+     40,
+     410,
+     440
+    ],
+    "side": 532,
+    "foot": true
+   },
+   {
+    "name": "stamp-2",
+    "box": [
+     579,
+     40,
+     956,
+     440
+    ],
+    "side": 532,
+    "foot": true
+   },
+   {
+    "name": "stamp-3",
+    "box": [
+     1128,
+     40,
+     1422,
+     442
+    ],
+    "side": 532,
+    "foot": true
+   },
+   {
+    "name": "stamp-4",
+    "box": [
+     68,
+     505,
+     458,
+     973
+    ],
+    "side": 532,
+    "foot": true
+   },
+   {
+    "name": "upg-night-shift",
+    "box": [
+     650,
+     506,
+     969,
+     973
+    ],
+    "side": 531,
+    "foot": false
+   },
+   {
+    "name": "ink-pad",
+    "box": [
+     1114,
+     590,
+     1477,
+     961
+    ],
+    "side": 422,
+    "foot": false
+   }
+  ]
+ },
+ "a3-jobs-A": {
+  "mode": "fit",
+  "fill": 0.88,
+  "items": [
+   {
+    "name": "holdout-01",
+    "box": [
+     82,
+     12,
+     472,
+     484
+    ],
+    "side": 536,
+    "foot": false
+   },
+   {
+    "name": "holdout-02",
+    "box": [
+     573,
+     12,
+     963,
+     485
+    ],
+    "side": 538,
+    "foot": false
+   },
+   {
+    "name": "holdout-03",
+    "box": [
+     1065,
+     12,
+     1455,
+     485
+    ],
+    "side": 538,
+    "foot": false
+   },
+   {
+    "name": "holdout-04",
+    "box": [
+     81,
+     526,
+     473,
+     997
+    ],
+    "side": 535,
+    "foot": false
+   },
+   {
+    "name": "holdout-05",
+    "box": [
+     573,
+     526,
+     963,
+     996
+    ],
+    "side": 534,
+    "foot": false
+   },
+   {
+    "name": "holdout-06",
+    "box": [
+     1064,
+     526,
+     1455,
+     996
+    ],
+    "side": 534,
+    "foot": false
+   }
+  ]
+ },
+ "a3-jobs-B": {
+  "mode": "fit",
+  "fill": 0.88,
+  "items": [
+   {
+    "name": "holdout-07",
+    "box": [
+     62,
+     8,
+     472,
+     493
+    ],
+    "side": 551,
+    "foot": false
+   },
+   {
+    "name": "holdout-08",
+    "box": [
+     563,
+     8,
+     974,
+     493
+    ],
+    "side": 551,
+    "foot": false
+   },
+   {
+    "name": "holdout-09",
+    "box": [
+     1067,
+     8,
+     1476,
+     493
+    ],
+    "side": 551,
+    "foot": false
+   },
+   {
+    "name": "holdout-10",
+    "box": [
+     62,
+     521,
+     472,
+     997
+    ],
+    "side": 541,
+    "foot": false
+   },
+   {
+    "name": "moon-hat",
+    "box": [
+     549,
+     532,
+     987,
+     960
+    ],
+    "side": 498,
+    "foot": false
+   },
+   {
+    "name": "bow",
+    "box": [
+     1079,
+     577,
+     1479,
+     974
+    ],
+    "side": 455,
+    "foot": false
+   }
+  ]
+ },
+ "a3-shop-A": {
+  "mode": "fit",
+  "fill": 0.88,
+  "items": [
+   {
+    "name": "santa-stations",
+    "box": [
+     71,
+     13,
+     445,
+     496
+    ],
+    "side": 549,
+    "foot": true
+   },
+   {
+    "name": "elf-choirs",
+    "box": [
+     559,
+     52,
+     987,
+     498
+    ],
+    "side": 549,
+    "foot": true
+   },
+   {
+    "name": "sleigh-depots",
+    "box": [
+     1050,
+     18,
+     1514,
+     478
+    ],
+    "side": 549,
+    "foot": true
+   },
+   {
+    "name": "reindeer-airlift",
+    "box": [
+     75,
+     538,
+     499,
+     1006
+    ],
+    "side": 549,
+    "foot": true
+   },
+   {
+    "name": "gift-drones",
+    "box": [
+     550,
+     586,
+     1021,
+     944
+    ],
+    "side": 549,
+    "foot": true
+   },
+   {
+    "name": "cheer-towers",
+    "box": [
+     1171,
+     529,
+     1441,
+     1000
+    ],
+    "side": 549,
+    "foot": true
+   }
+  ]
+ },
+ "a3-shop-B": {
+  "mode": "fit",
+  "fill": 0.88,
+  "items": [
+   {
+    "name": "snow-machines",
+    "box": [
+     43,
+     67,
+     527,
+     475
+    ],
+    "side": 557,
+    "foot": true
+   },
+   {
+    "name": "orbital-tinsel",
+    "box": [
+     557,
+     59,
+     1047,
+     419
+    ],
+    "side": 557,
+    "foot": true
+   },
+   {
+    "name": "bell-1",
+    "box": [
+     1205,
+     27,
+     1449,
+     484
+    ],
+    "side": 519,
+    "foot": false
+   },
+   {
+    "name": "bell-2",
+    "box": [
+     40,
+     633,
+     528,
+     935
+    ],
+    "side": 555,
+    "foot": false
+   },
+   {
+    "name": "bell-3",
+    "box": [
+     644,
+     493,
+     931,
+     992
+    ],
+    "side": 567,
+    "foot": false
+   },
+   {
+    "name": "bell-4",
+    "box": [
+     1086,
+     523,
+     1500,
+     997
+    ],
+    "side": 539,
+    "foot": false
+   }
+  ]
+ },
+ "a3-upgrades": {
+  "mode": "fit",
+  "fill": 0.88,
+  "items": [
+   {
+    "name": "upg-bigger-sacks",
+    "box": [
+     30,
+     31,
+     514,
+     486
+    ],
+    "side": 550,
+    "foot": false
+   },
+   {
+    "name": "upg-warm-mittens",
+    "box": [
+     576,
+     83,
+     989,
+     447
+    ],
+    "side": 469,
+    "foot": false
+   },
+   {
+    "name": "upg-sing-along",
+    "box": [
+     1052,
+     78,
+     1517,
+     426
+    ],
+    "side": 528,
+    "foot": false
+   },
+   {
+    "name": "upg-carol-books",
+    "box": [
+     34,
+     594,
+     495,
+     970
+    ],
+    "side": 524,
+    "foot": false
+   },
+   {
+    "name": "upg-gift-shops",
+    "box": [
+     570,
+     523,
+     991,
+     978
+    ],
+    "side": 517,
+    "foot": false
+   },
+   {
+    "name": "upg-twelve-days-of-overtime",
+    "box": [
+     1098,
+     508,
+     1516,
+     992
+    ],
+    "side": 550,
+    "foot": false
+   }
+  ]
+ },
+ "a4-species-A": {
+  "mode": "fit",
+  "fill": 0.88,
+  "items": [
+   {
+    "name": "species-01",
+    "box": [
+     65,
+     79,
+     461,
+     486
+    ],
+    "side": 462,
+    "foot": false
+   },
+   {
+    "name": "species-02",
+    "box": [
+     574,
+     32,
+     932,
+     493
+    ],
+    "side": 524,
+    "foot": false
+   },
+   {
+    "name": "species-03",
+    "box": [
+     1019,
+     24,
+     1512,
+     471
+    ],
+    "side": 560,
+    "foot": false
+   },
+   {
+    "name": "species-04",
+    "box": [
+     59,
+     548,
+     433,
+     968
+    ],
+    "side": 477,
+    "foot": false
+   },
+   {
+    "name": "species-05",
+    "box": [
+     603,
+     541,
+     942,
+     995
+    ],
+    "side": 516,
+    "foot": false
+   },
+   {
+    "name": "species-06",
+    "box": [
+     1059,
+     545,
+     1505,
+     976
+    ],
+    "side": 507,
+    "foot": false
+   }
+  ]
+ },
+ "a4-species-B": {
+  "mode": "fit",
+  "fill": 0.88,
+  "items": [
+   {
+    "name": "species-07",
+    "box": [
+     122,
+     176,
+     408,
+     480
+    ],
+    "side": 345,
+    "foot": false
+   },
+   {
+    "name": "species-08",
+    "box": [
+     609,
+     7,
+     920,
+     501
+    ],
+    "side": 561,
+    "foot": false
+   },
+   {
+    "name": "species-09",
+    "box": [
+     1020,
+     15,
+     1503,
+     501
+    ],
+    "side": 552,
+    "foot": false
+   },
+   {
+    "name": "scanner-1",
+    "box": [
+     74,
+     530,
+     452,
+     984
+    ],
+    "side": 516,
+    "foot": false
+   },
+   {
+    "name": "scanner-2",
+    "box": [
+     641,
+     567,
+     907,
+     982
+    ],
+    "side": 472,
+    "foot": false
+   },
+   {
+    "name": "scanner-3",
+    "box": [
+     1164,
+     525,
+     1410,
+     986
+    ],
+    "side": 524,
+    "foot": false
+   }
+  ]
+ },
+ "a4-shop-A": {
+  "mode": "fit",
+  "fill": 0.88,
+  "items": [
+   {
+    "name": "crewed-sleighs",
+    "box": [
+     18,
+     76,
+     529,
+     441
+    ],
+    "side": 581,
+    "foot": true
+   },
+   {
+    "name": "elf-colonies",
+    "box": [
+     550,
+     24,
+     1000,
+     490
+    ],
+    "side": 581,
+    "foot": true
+   },
+   {
+    "name": "star-choirs",
+    "box": [
+     1065,
+     71,
+     1502,
+     497
+    ],
+    "side": 581,
+    "foot": true
+   },
+   {
+    "name": "pips-fleet",
+    "box": [
+     17,
+     566,
+     519,
+     877
+    ],
+    "side": 581,
+    "foot": true
+   },
+   {
+    "name": "sleigh-probes",
+    "box": [
+     553,
+     609,
+     1012,
+     896
+    ],
+    "side": 581,
+    "foot": true
+   },
+   {
+    "name": "ornament-sats",
+    "box": [
+     1097,
+     556,
+     1472,
+     923
+    ],
+    "side": 581,
+    "foot": true
+   }
+  ]
+ },
+ "a4-shop-B": {
+  "mode": "fit",
+  "fill": 0.88,
+  "items": [
+   {
+    "name": "star-forges",
+    "box": [
+     75,
+     14,
+     522,
+     486
+    ],
+    "side": 536,
+    "foot": true
+   },
+   {
+    "name": "wreaths-of-light",
+    "box": [
+     585,
+     48,
+     954,
+     447
+    ],
+    "side": 536,
+    "foot": true
+   },
+   {
+    "name": "scanner-4",
+    "box": [
+     1097,
+     31,
+     1445,
+     480
+    ],
+    "side": 510,
+    "foot": false
+   },
+   {
+    "name": "upg-warmer-suits",
+    "box": [
+     65,
+     524,
+     461,
+     1010
+    ],
+    "side": 552,
+    "foot": false
+   },
+   {
+    "name": "upg-star-cocoa",
+    "box": [
+     608,
+     524,
+     955,
+     990
+    ],
+    "side": 530,
+    "foot": false
+   },
+   {
+    "name": "upg-colony-bakeries",
+    "box": [
+     1067,
+     532,
+     1470,
+     993
+    ],
+    "side": 524,
+    "foot": false
+   }
+  ]
+ },
+ "a4-upgrades": {
+  "mode": "fit",
+  "fill": 0.88,
+  "items": [
+   {
+    "name": "upg-letters-from-home",
+    "box": [
+     53,
+     106,
+     479,
+     462
+    ],
+    "side": 484,
+    "foot": false
+   },
+   {
+    "name": "upg-gift-exchange",
+    "box": [
+     563,
+     77,
+     1007,
+     432
+    ],
+    "side": 505,
+    "foot": false
+   },
+   {
+    "name": "upg-home-for-the-holidays",
+    "box": [
+     1094,
+     23,
+     1466,
+     496
+    ],
+    "side": 538,
+    "foot": false
+   },
+   {
+    "name": "species-10",
+    "box": [
+     69,
+     571,
+     470,
+     959
+    ],
+    "side": 456,
+    "foot": false
+   },
+   {
+    "name": "spare-home",
+    "box": [
+     613,
+     526,
+     936,
+     987
+    ],
+    "side": 524,
+    "foot": false
+   },
+   {
+    "name": "spare-letter",
+    "box": [
+     1083,
+     588,
+     1491,
+     931
+    ],
+    "side": 464,
+    "foot": false
+   }
+  ]
+ },
+ "lock-chains": {
+  "mode": "fit",
+  "fill": 0.88,
+  "items": [
+   {
+    "name": "chain-loop",
+    "box": [
+     47,
+     54,
+     474,
+     461
+    ],
+    "side": 485,
+    "foot": false
+   },
+   {
+    "name": "padlock",
+    "box": [
+     598,
+     42,
+     926,
+     467
+    ],
+    "side": 483,
+    "foot": false
+   },
+   {
+    "name": "chain-run-raw",
+    "box": [
+     1036,
+     227,
+     1516,
+     318
+    ],
+    "side": 545,
+    "foot": false
+   },
+   {
+    "name": "clamp",
+    "box": [
+     88,
+     524,
+     443,
+     975
+    ],
+    "side": 512,
+    "foot": false
+   },
+   {
+    "name": "chain-badge",
+    "box": [
+     605,
+     605,
+     930,
+     931
+    ],
+    "side": 370,
+    "foot": false
+   },
+   {
+    "name": "padlock-small",
+    "box": [
+     1164,
+     618,
+     1413,
+     916
+    ],
+    "side": 339,
+    "foot": false
+   }
+  ]
+ },
+ "overrides": {
+  "mode": "fit",
+  "fill": 0.88,
+  "items": [
+   {
+    "name": "override-1",
+    "box": [
+     28,
+     114,
+     562,
+     508
+    ],
+    "side": 607,
+    "foot": false
+   },
+   {
+    "name": "override-2",
+    "box": [
+     562,
+     16,
+     1093,
+     494
+    ],
+    "side": 603,
+    "foot": false
+   },
+   {
+    "name": "override-3",
+    "box": [
+     1119,
+     9,
+     1521,
+     505
+    ],
+    "side": 564,
+    "foot": false
+   },
+   {
+    "name": "override-4",
+    "box": [
+     24,
+     554,
+     562,
+     985
+    ],
+    "side": 611,
+    "foot": false
+   },
+   {
+    "name": "override-5",
+    "box": [
+     568,
+     518,
+     1073,
+     1000
+    ],
+    "side": 574,
+    "foot": false
+   },
+   {
+    "name": "lever",
+    "box": [
+     1128,
+     543,
+     1491,
+     1008
+    ],
+    "side": 528,
+    "foot": false
+   }
+  ]
+ }
+}

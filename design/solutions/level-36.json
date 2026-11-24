@@ -1,0 +1,18 @@
+{
+ "level": 36,
+ "act": 4,
+ "rank": 6,
+ "how": "tools/run-proof.sh <session> \"<opts>\" with the game open at ?debug (real mouse input: taps on the stage, lucky things, shop tabs and items named by __game.bestBuy, the mitten on every choice)",
+ "opts": {
+  "level": 36,
+  "toRank": 7,
+  "policy": "clear",
+  "tps": 10,
+  "limit": 312
+ },
+ "expect": {
+  "act": 4,
+  "rank": 7,
+  "card": "promotion or promotion-choice/contact-card"
+ }
+}

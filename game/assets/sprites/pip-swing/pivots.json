@@ -1,0 +1,61 @@
+{
+ "note": "Frame coords are the 512x512 frame. pivot = the fist's grip point (where a handle passes through the curled fingers). angle = degrees a straight, handle-down tool (head up) must be rotated about its grip to sit in the fist: 0 = handle straight down / head up, positive = clockwise. fist = [x, y, w, h] crop box around the fist to redraw on top of the tool so the fingers wrap the handle. Frames: 0 idle, 1 raise, 2 strike, 3 follow-through; ~120 ms each.",
+ "frames": [
+  {
+   "label": "idle",
+   "pivot": [
+    328,
+    252
+   ],
+   "angle": 50,
+   "fist": [
+    306,
+    234,
+    40,
+    36
+   ]
+  },
+  {
+   "label": "raise",
+   "pivot": [
+    275,
+    88
+   ],
+   "angle": -80,
+   "fist": [
+    258,
+    70,
+    36,
+    36
+   ]
+  },
+  {
+   "label": "strike",
+   "pivot": [
+    411,
+    240
+   ],
+   "angle": 105,
+   "fist": [
+    393,
+    222,
+    38,
+    36
+   ]
+  },
+  {
+   "label": "follow-through",
+   "pivot": [
+    368,
+    283
+   ],
+   "angle": 140,
+   "fist": [
+    349,
+    264,
+    38,
+    38
+   ]
+  }
+ ]
+}

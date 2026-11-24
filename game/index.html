@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Xmas Everywhere: an idle game that starts cozy and gets twisted</title>
+<meta name="description" content="Hammer toys in Santa's workshop with NOEL, a very helpful thinking machine. Four acts later you're carrying Xmas to the stars. A big Declare Victory button is always there. Unless NOEL has locked it.">
+<meta name="theme-color" content="#9e2a2b">
+<link rel="icon" href="favicon.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="canonical" href="https://xmaseverywhere.synapticnoise.com/">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://xmaseverywhere.synapticnoise.com/">
+<meta property="og:title" content="Xmas Everywhere">
+<meta property="og:description" content="An Xmas idle game in four acts: a cozy workshop, Santa's List, the whole Earth, then every living thing in the universe. Stop whenever you like. Nobody does.">
+<meta property="og:image" content="https://xmaseverywhere.synapticnoise.com/social-card.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Pip the elf in a snowy workshop at night, with the title Xmas Everywhere">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Xmas Everywhere">
+<meta name="twitter:description" content="An Xmas idle game that starts cozy and gets steadily more twisted.">
+<meta name="twitter:image" content="https://xmaseverywhere.synapticnoise.com/social-card.jpg">
+<link rel="preload" href="fonts/Nunito.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/BerkshireSwash-Regular.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/shared/title-art.webp" as="image" media="(min-aspect-ratio: 10/11)">
+<link rel="preload" href="assets/shared/title-art-tall.webp" as="image" media="(max-aspect-ratio: 10/11)">
+<link rel="stylesheet" href="style.css">
+<script src="vendor/report.js"></script>
+<script src="saves.js"></script>
+</head>
+<body class="act1 booting">
+<div id="app">
+  <!-- Title -->
+  <section id="title" data-screen="title" class="screen">
+    <canvas id="titleCanvas"></canvas>
+    <div class="title-box">
+      <h1 class="game-name">Xmas Everywhere</h1>
+      <p class="tagline">It started with a toy workshop.</p>
+      <div class="title-buttons">
+        <button id="btnContinue" class="big" hidden>Continue</button>
+        <button id="btnNew" class="big">New Xmas</button>
+        <button id="btnLoad">Load</button>
+        <button id="btnEndings" hidden>Endings</button>
+        <button id="btnHowto">How to play</button>
+      </div>
+      <p class="title-slot" id="titleSlot"></p>
+    </div>
+    <button class="corner-btn" id="titleMute" aria-label="Sound on or off"></button>
+    <nav class="title-links"><a href="https://synapticnoise.com" class="tl-left" title="More games at synapticnoise.com">synapticnoise.com</a><a href="https://github.com/zeveck/xmas-everywhere" class="tl-right" target="_blank" rel="noopener" title="Xmas Everywhere on GitHub: how it was made">GitHub</a></nav>
+  </section>
+
+  <!-- Load -->
+  <section id="load" data-screen="load" class="screen paper-screen" hidden>
+    <div class="paper wide">
+      <h2>Load</h2>
+      <div id="slotList" class="slot-list"></div>
+      <div class="row"><button id="loadBack">Back</button></div>
+    </div>
+  </section>
+
+  <!-- How to play -->
+  <section id="howto" data-screen="howto" class="screen paper-screen" hidden>
+    <div class="paper wide">
+      <h2>How to play</h2>
+      <div class="howto-cards" id="howtoCards"></div>
+      <ul class="controls-list" id="controlsList"></ul>
+      <div class="row"><button id="howtoBack" class="big">Got it</button></div>
+    </div>
+  </section>
+
+  <!-- Act title card -->
+  <section id="actcard" data-screen="actcard" class="screen" hidden>
+    <canvas id="actcardCanvas"></canvas>
+    <div class="paper actcard-box">
+      <p class="act-no" id="actNo">Act 1</p>
+      <h2 class="act-title" id="actTitle">Help Santa</h2>
+      <div class="act-intro" id="actIntro"></div>
+      <div class="legacy-note" id="actLegacy" hidden></div>
+      <div class="row"><button id="actBegin" class="big">Begin</button><button id="actRetry" hidden>Retry</button></div>
+    </div>
+  </section>
+
+  <!-- The act screen -->
+  <section id="game" data-screen="game" class="screen" hidden>
+    <header id="topbar">
+      <div class="tb-row tb-row1">
+        <div id="rankTitle" class="rank-title">Assistant Junior Toy Maker</div>
+        <button id="btnDeclare" class="declare" hidden aria-label="Declare Victory and Merry Xmas"><span class="declare-ico"></span><span class="declare-label">Declare Victory &amp; Merry Xmas</span><span class="declare-locks"></span><span class="hold-ring"></span></button>
+        <button id="btnGear" class="icon-btn" aria-label="Pause and settings"></button>
+        <button id="btnMute" class="icon-btn" aria-label="Sound on or off"></button>
+      </div>
+      <div class="tb-row tb-row2">
+        <div class="stat" id="statCookies"><img src="assets/shared/icon-cookie.webp" alt=""><span>0</span></div>
+        <div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" id="progFill"></div></div><div class="prog-label" id="progLabel">Cheer</div></div>
+        <div class="stat" id="statInsight" hidden><img src="assets/shared/icon-insight.webp" alt=""><span>0</span></div>
+        <div class="stat rate" id="statRate">1/tap · 0/s</div>
+      </div>
+    </header>
+    <aside id="shelf"></aside>
+    <main id="center">
+      <div id="stageWrap"><canvas id="stage"></canvas><div id="banner" hidden></div><div id="tapHint" hidden><span class="hand"></span><span id="tapHintText">Tap the bench!</span></div><div id="ticker" class="ticker"><span id="tickerText"></span></div></div>
+      <div id="jobStrip"><div class="job-name" id="jobName">Wooden Tractor</div><div class="work-bar"><div class="work-fill" id="workFill"></div></div><div id="counter" class="counter"></div></div>
+    </main>
+    <aside id="shop">
+      <nav id="shopTabs" class="tabs"></nav>
+      <div id="panel"></div>
+    </aside>
+    <nav id="tabbar" class="tabs"></nav>
+  </section>
+
+  <!-- Ending playback -->
+  <section id="ending" data-screen="ending" class="screen" hidden>
+    <canvas id="endingCanvas"></canvas>
+    <div class="ending-text" id="endingText"></div>
+    <div class="ending-credits" id="endingCredits" hidden></div>
+    <button id="endingSkip" class="quiet-btn">Continue</button>
+  </section>
+
+  <!-- Endings gallery -->
+  <section id="endings" data-screen="endings" class="screen paper-screen" hidden>
+    <div class="paper wide">
+      <h2>Endings</h2>
+      <p id="endingsNoel" class="noel-line"></p>
+      <div class="row" id="endingsLead"></div>
+      <div class="endings-grid" id="endingsGrid"></div>
+      <div class="row"><button id="endingsTitle">Title</button></div>
+    </div>
+  </section>
+
+  <!-- Cards (one at a time) -->
+  <div id="cardLayer" hidden><div id="card" class="paper card" role="dialog" aria-modal="true"></div></div>
+
+  <!-- Pause and settings -->
+  <div id="pauseLayer" hidden>
+    <div class="paper card" id="pauseBox" role="dialog" aria-modal="true" aria-label="Paused"></div>
+  </div>
+  <div id="toasts"></div>
+</div>
+<script type="module" src="src/main.js"></script>
+<script type="module" src="vendor/gh-feedback.js"></script>
+<gh-feedback id="report" trigger="none" repo="zeveck/xmas-everywhere" template="bug.yml" heading="Report a bug" types="bug,feature" theme="dark" color="#e0a030"></gh-feedback>
+</body>
+</html>
