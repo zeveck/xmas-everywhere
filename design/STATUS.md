@@ -44,6 +44,8 @@ Act 4, Xmas Everywhere: find life in the
 - Published: https://xmaseverywhere.synapticnoise.com (repo zeveck/xmas-everywhere, public; Feedback on, repo set). HTTPS on. In the gallery at the top of synapticnoise.com; plans card: Published.
 - Art sheet: https://synapticnoise.com/plans/xmas-everywhere/art/ (on the plans page; pictures linked from the repo)
 
+- Fix #1–#3 and the stats card (2026-11-25): done, published; 40/40 rank replays passed on the new code; issues closed by the push.
+
 ## Phases
 
 - [x] Brief: design/BRIEF.md (Act 4's cut-off line read as "the universe")
