@@ -216,7 +216,7 @@ function lockTimers(S, dt) {
     S.holdT += dt;
     if (S.holdT >= LOCK.HOLD) {
       const before = S.locks.length; S.locks = S.locks.filter((l) => !l.built); S.holdT = 0; if (S.locks.length !== before) S.escT = 0;
-      S.events.push({ type: 'cleared', left: S.locks.length });
+      S.events.push({ type: 'cleared', left: S.locks.length, removed: before - S.locks.length });
       if (!S.locks.length) { release(S); S.gripT = 0; S.T = S.B = null; S.carried = 0; S.extra = 0; S.events.push({ type: 'unlock' }); }
     }
   }

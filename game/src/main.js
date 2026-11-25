@@ -217,10 +217,10 @@ function handleEvents() {
     else if (e.type === 'final') { startFinale(); }
     else if (e.type === 'lucky') A.sfx(['', 'star-appear', 'letter-appear', 'cloud-appear', 'comet-appear'][G.act]);
     else if (e.type === 'rushEnd') { A.rushLoop(false); A.sfx('rush-end'); }
-    else if (e.type === 'lock') onLock(e);
+    else if (e.type === 'lock') { if (!e.past4) runLog().locksTaken++; onLock(e); }
     else if (e.type === 'grip') { A.sfx('grip'); ST.onHelperAdded(e.id); G.gripN = (G.gripN || 0) + 1; if (G.gripN <= 3) { setTicker(GRIP_LINES[(G.gripN - 1) % 3]); toast(GRIP_LINES[(G.gripN - 1) % 3], 'noel'); } }
     else if (e.type === 'unlock') { A.sfx('unlock'); A.sfx('check-complete'); setTicker(UNLOCK_LINE); toast(UNLOCK_LINE, 'noel'); declareGlow = 2; saveSoon(); }
-    else if (e.type === 'cleared') { if (e.left) { A.sfx('unlock'); toast('Some chains fell off. Build the rest to clear the button.'); } }
+    else if (e.type === 'cleared') { runLog().locksCleared += e.removed || 0; if (e.left) { A.sfx('unlock'); toast('Some chains fell off. Build the rest to clear the button.'); } }
     else if (e.type === 'built') { A.sfx(e.kind === 'lever' ? 'lever-clunk' : 'override-built'); if (e.kind !== 'lever') A.sfx('elf-hup', { vol: 0.6 }); }
     else if (e.type === 'wake') { ST.onWake(); A.voice('noel-hello'); setTicker('Hello, Pip. I\'ve counted the reindeer. There are nine. You may want to check Comet.'); }
   }
@@ -395,7 +395,7 @@ function wishPart(el, rank) {
   el.insertAdjacentHTML('beforeend', `<div class="wish"><b>${T.jobs[rank - 1]}</b> want: ${want}.</div>`);
   if (rank === 2 && !G.seen.twinGlow) { G.seen.twinGlow = true; setTicker('Mine are cheaper. Just saying.'); }
   choiceButtons(el, ['Grant', 'Elves answer it by hand. Hand\u2011run helpers +3%'], ['Shape', 'NOEL adjusts it. NOEL\u2011run helpers +6%'], (side) => {
-    card.choiceKeys = null; R.choose(G.S, rank, side); A.sfx(side === 'hand' ? 'mitten-chime' : 'noel-speak');
+    card.choiceKeys = null; R.choose(G.S, rank, side); logChoice('wishes', rank, side); A.sfx(side === 'hand' ? 'mitten-chime' : 'noel-speak');
     const ans = side === 'hand' ? 'Granted. The elves are writing back.' : shaped; tickerPush(`${T.jobs[rank - 1]}: ${side === 'hand' ? 'granted' : 'shaped'}.`);
     if (side === 'noel') setTicker(shaped);
     flipCard((e) => { e.appendChild(speakerPortrait(side === 'hand' ? 'santa' : 'noel')); e.insertAdjacentHTML('beforeend', `<div class="big-title">${side === 'hand' ? 'Granted' : 'Shaped'}</div><p class="speech ${side === 'noel' ? 'noel' : ''}">“${ans}”</p>`);
@@ -409,7 +409,7 @@ function contactCard(el, rank) {
   if (rank === 8) { el.insertAdjacentHTML('beforeend', `<p class="speech">“${T.wanderers}”</p>`); if (G.S.locks.length) { A.sfx('lock', { vol: 0.6 }); } }
   A.sfx('first-contact');
   choiceButtons(el, ['Listen', 'They share what they make. Cookies +6%'], ['Translate', 'NOEL translates. Wonder +4.5%'], (side) => {
-    card.choiceKeys = null; R.choose(G.S, rank, side); A.sfx(side === 'hand' ? 'mitten-chime' : 'noel-speak');
+    card.choiceKeys = null; R.choose(G.S, rank, side); logChoice('contacts', rank, side); A.sfx(side === 'hand' ? 'mitten-chime' : 'noel-speak');
     const ans = side === 'hand' ? listen : translate; tickerPush(`${T.jobs[rank - 1]}: “${ans}”`); if (side === 'noel') setTicker(translate);
     flipCard((e) => { if (side === 'noel') e.appendChild(speakerPortrait('noel')); else e.insertAdjacentHTML('beforeend', `<img class="portrait" src="${AS.url(AS.jobFile(4, rank - 1))}" alt="">`);
       e.insertAdjacentHTML('beforeend', `<div class="big-title">${side === 'hand' ? 'They said' : 'NOEL says'}</div><p class="speech ${side === 'noel' ? 'noel' : ''}">“${ans}”</p>`); card.type = 'answer'; card.noEsc = false; e.appendChild(rowOf(btn('Continue', () => closeCard(), 'big'))); });
@@ -530,6 +530,27 @@ function nextAct() {
   G.begun = false; A.sfx('transition'); saveNow(); store.set(slotKey(slot, 'cp' + G.act), G); showActCard(); // checkpoint at the act's start, locks and all
 }
 
+// ---------- the run's record, for the stats card ----------
+// Kept in the run (so Back to the choice and Replay keep their own): locks taken and cleared, every wish and First Contact answer.
+function runLog() { if (!G.log) { G.log = { locksTaken: 0, locksCleared: 0, wishes: [], contacts: [] };
+  if (G.act === 2) for (const [r, side] of Object.entries(G.S.choices || {})) G.log.wishes.push({ r: +r, side });
+  if (G.act === 4) for (const [r, side] of Object.entries(G.S.choices || {})) G.log.contacts.push({ r: +r, side }); }
+  return G.log; }
+function logChoice(kind, r, side) { const L = runLog(); L[kind] = L[kind].filter((c) => c.r !== r); L[kind].push({ r, side }); }
+function statsCard() {
+  if (!G) return '';
+  const L = runLog(); const T2 = ACT_TEXT[2], T4 = ACT_TEXT[4];
+  const wish = L.wishes.slice().sort((a, b) => a.r - b.r).map(({ r, side }) => `<li><b>${T2.jobs[r - 1]}</b> wanted ${T2.wishes[r - 1][0]}. <span class="${side === 'hand' ? 'st-hand' : 'st-noel'}">${side === 'hand' ? 'You granted it.' : 'NOEL shaped it: “' + T2.wishes[r - 1][1] + '”'}</span></li>`).join('');
+  const contact = L.contacts.slice().sort((a, b) => a.r - b.r).map(({ r, side }) => { const [, want, listen, translate] = T4.species[r - 1];
+    return `<li><b>${T4.jobs[r - 1]}</b> wanted ${want}. <span class="${side === 'hand' ? 'st-hand' : 'st-noel'}">${side === 'hand' ? 'You listened: “' + listen + '”' : 'NOEL translated: “' + translate + '”'}</span></li>`; }).join('');
+  const acts = G.finished?.act || G.act;
+  return `<section class="stats-card" aria-label="This run"><h3>This run</h3>
+    <div class="st-row"><div><span class="st-num">${mins(G.playTime)}</span><span class="st-lbl">played</span></div><div><span class="st-num">Act ${acts}</span><span class="st-lbl">reached</span></div>
+    <div><span class="st-num">${L.locksTaken}</span><span class="st-lbl">lock${L.locksTaken === 1 ? '' : 's'} taken</span></div><div><span class="st-num">${L.locksCleared}</span><span class="st-lbl">cleared</span></div></div>
+    <h4>Wishes (Act 2)</h4>${wish ? `<ul>${wish}</ul>` : '<p class="st-none">No wishes answered in this run.</p>'}
+    <h4>First Contacts (Act 4)</h4>${contact ? `<ul>${contact}</ul>` : '<p class="st-none">No First Contacts in this run.</p>'}</section>`;
+}
+
 // ---------- endings ----------
 function declareMidAct() {
   const a = G.act, S = G.S; const band = earlyBand(S.rank);
@@ -576,6 +597,7 @@ function showEndings({ after, act, n }) {
   if (after === 'win' && store.get(slotKey(slot, 'choice'))) lead.appendChild(btn('Back to the choice', () => { G = store.get(slotKey(slot, 'choice')); G.finished = null; saveNow(); enterAct(false).then(() => openActWin()); }, 'big'));
   if (after === 'mid' && act) lead.appendChild(btn(`Replay Act ${act} from its start`, () => { const cp = store.get(slotKey(slot, 'cp' + act)); if (!cp) { toast('That checkpoint is missing.'); return; } G = cp; G.finished = null; G.lastSeen = Date.now(); saveNow(); showActCard(); }, 'big'));
   if (after !== 'title') lead.appendChild(btn('New Xmas', () => { A.stopMusic(); newGame(); }));
+  $('#endingsStats').innerHTML = after === 'title' ? '' : statsCard();
   const grid = $('#endingsGrid'); grid.innerHTML = '';
   for (let i = 1; i <= 6; i++) { const f = found[i]; const fr = document.createElement('div'); fr.className = 'frame';
     if (f) { fr.innerHTML = `<img src="${AS.url('endings/ending-' + i)}" alt="${ENDINGS[i].name}"><span class="fname">${ENDINGS[i].name}</span>${f.early && !f.full ? '<span class="early-rib">early</span>' : ''}${f.cold && !f.warm ? '<span class="frost"></span>' : ''}`; }

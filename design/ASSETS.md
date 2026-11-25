@@ -43,3 +43,10 @@ Running total: about **$14.40 of $30**.
 ending-1…6, nanogen pro 2K 4:3 with the Endings table's references, 1600×1200 WebP. 12 calls (1: 2, 2: 2, 3: 1, 4: 1, 5: 3, 6: 2 + a pro edit to restore Pip's hat band). About **$2.88**.
 
 **Running total: about $17.30 of $30.** Every asset in the design is made; nothing cut.
+
+
+## Fix #3 (2026-11-25)
+
+Act 1 now uses Chief Toy Officer's swing frames, hammers and step stool (already paid for there, $0). Act 2's clerk swing remade from those frames: 4 frames, 6 imagegen2 edits (medium, `--complexity low`), about **$0.45**.
+
+Running total: about $17.75 (this change: $0.45 of its $20).

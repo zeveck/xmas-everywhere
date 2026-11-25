@@ -27,6 +27,8 @@ Act 4, Xmas Everywhere: find life in the
   - #2: Screen cap doesn't capture the whole screen (https://github.com/zeveck/xmas-everywhere/issues/2)
   - #3: Visual layout (https://github.com/zeveck/xmas-everywhere/issues/3)
 
+- `--change` (exactly as typed): `/gamegen:gamegen --out xmas-everywhere --change add a stats card to the Endings screen: time played, locks taken and cleared, and every wish and First Contact answer you chose --publish --no-confirm`
+
 ## Settings
 
 - Feedback: on (from `--feedback`). Saves: 3 (from `--saves`). Both added to the design in round 2's refine.

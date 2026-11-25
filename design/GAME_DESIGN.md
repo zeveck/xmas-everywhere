@@ -662,6 +662,11 @@ music plays, and the credits roll. Then the **Endings** screen.
   painting and name; an **"early" ribbon** stays until its full version is found, and a **frost
   mark** (cold-blue corner) until a warm one is. Unfound frames show a wrapped present with a
   question mark (Silent Night's says "A candle, somewhere").
+- **The stats card (added by request):** under the six frames, "This run": time played, the act reached,
+  locks taken and locks cleared, then every wish answered in Act 2 (the group, what they wanted, and "You
+  granted it" or NOEL's shaped line) and every First Contact in Act 4 (the species, what they wanted, and
+  their reply or NOEL's translation). It is kept with the run (so Back to the choice and Replay Act N keep
+  their own), and not shown when the Endings screen is opened from the title.
 
 ## Win, lose and progress
 
