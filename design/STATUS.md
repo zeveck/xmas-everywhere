@@ -47,6 +47,7 @@ Act 4, Xmas Everywhere: find life in the
 - Art sheet: https://synapticnoise.com/plans/xmas-everywhere/art/ (on the plans page; pictures linked from the repo)
 
 - Fix #1–#3 and the stats card (2026-11-25): done, published; 40/40 rank replays passed on the new code; issues closed by the push.
+- Declare Victory wording (2026-11-25): Act 2 title card, Act 2 how-to card, padlock warning (with the gift-box icon), Lock card heading; checked at six sizes and live; published; Design page on the plans page updated.
 
 ## Phases
 
