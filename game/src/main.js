@@ -39,7 +39,7 @@ async function boot() {
   await document.fonts.load('40px "Berkshire Swash"'); await document.fonts.load('900 16px Nunito');
   wireInput(); buildTitle(); show('title'); if (endingsBroken) setTimeout(() => toast('Your saved endings couldn\'t be read, so the Endings list starts again.'), 800);
   document.body.classList.remove('booting');
-  window.gameReport?.setup({ game: 'Xmas Everywhere', key: KEY, visibility: 'on', state: () => window.__game.state(), pause: () => pause(true), grab: () => new Promise((r) => $('#stage').toBlob(r, 'image/png')), releaseAll: () => { keysDown.clear(); } });
+  window.gameReport?.setup({ game: 'Xmas Everywhere', key: KEY, visibility: 'on', state: () => window.__game.state(), pause: () => pause(true), grab: grabScreen, releaseAll: () => { keysDown.clear(); } });
   requestAnimationFrame(loop);
   const local = ['localhost', '127.0.0.1'].includes(location.hostname);
   if ('serviceWorker' in navigator && (!local || params.has('sw'))) navigator.serviceWorker.register('sw.js');
@@ -48,6 +48,20 @@ let titleArt = null, titleTall = false, sharedReady = null;
 async function loadTitleArt() { titleTall = innerHeight > innerWidth * 1.1; const p = titleTall ? 'shared/title-art-tall' : 'shared/title-art';
   try { const r = await fetch(`assets/${p}.webp`); titleArt = await createImageBitmap(await r.blob()); } catch { titleTall = false; try { const r = await fetch('assets/shared/title-art.webp'); titleArt = await createImageBitmap(await r.blob()); } catch {} } }
 function setMuteIcons() { const ic = A.isMuted() ? UI.ICON.muted : UI.ICON.sound; $('#btnMute').innerHTML = ic; $('#titleMute').innerHTML = ic; }
+
+// The bug report's picture: the whole game screen (top bar, shop, cards and the stage), not just the stage canvas.
+// html2canvas is bundled (vendor/) and loaded on first use; if it fails, the stage alone.
+let h2cLoading = null;
+function loadH2C() { if (window.html2canvas) return Promise.resolve(); if (!h2cLoading) h2cLoading = new Promise((ok, no) => { const sc = document.createElement('script'); sc.src = 'vendor/html2canvas.min.js'; sc.onload = ok; sc.onerror = no; document.head.appendChild(sc); }); return h2cLoading; }
+async function grabScreen() {
+  const stageOnly = () => new Promise((r) => $('#stage').toBlob(r, 'image/png'));
+  try {
+    await loadH2C();
+    const c = await window.html2canvas($('#app'), { backgroundColor: getComputedStyle(document.body).backgroundColor, scale: Math.min(1.5, window.devicePixelRatio || 1), logging: false, useCORS: true,
+      ignoreElements: (el) => el.id === 'pauseLayer' || el.id === 'toasts' || el.tagName === 'GH-FEEDBACK' });
+    return await new Promise((r) => c.toBlob(r, 'image/png'));
+  } catch { return stageOnly(); }
+}
 
 // ---------- title ----------
 function buildTitle() {
