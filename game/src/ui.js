@@ -97,8 +97,8 @@ export function update(S, extra = {}) {
   setIf('ins', $('#statInsight span'), 'text', fmt(S.insight));
   const tapv = R.tapValue(S); setIf('rate', $('#statRate'), 'text', `${fmt(tapv)}/tap · ${fmt(RR.crew + RR.auto)}/s`);
   const thr = THRESHOLDS[act]; let frac, label;
-  if (S.rank < 10) { frac = (S.prog - thr[S.rank - 1]) / (thr[S.rank] - thr[S.rank - 1]); label = `<span class="rank-no">Rank ${S.rank} · </span><span class="pl-word">${T.progress}&nbsp;</span>${fmt(S.prog)}&nbsp;/&nbsp;${fmt(thr[S.rank])}`; }
-  else { frac = 1; label = `<span class="rank-no">Rank 10 · </span>${fmt(S.prog)}<span class="pl-word">&nbsp;${T.progress}</span>`; }
+  if (S.rank < 10) { frac = (S.prog - thr[S.rank - 1]) / (thr[S.rank] - thr[S.rank - 1]); label = `<span class="rank-no">Rank ${S.rank} ·&nbsp;</span><span class="pl-word">${T.progress}&nbsp;</span>${fmt(S.prog)}&nbsp;/&nbsp;${fmt(thr[S.rank])}`; }
+  else { frac = 1; label = `<span class="rank-no">Rank 10 ·&nbsp;</span>${fmt(S.prog)}<span class="pl-word">&nbsp;${T.progress}</span>`; }
   setIf('progw', $('#progFill'), 'width', Math.max(0, Math.min(100, frac * 100)).toFixed(1) + '%'); setIf('progl', $('#progLabel'), 'html', label);
   // job strip
   setIf('jobname', $('#jobName'), 'text', T.jobs[S.job]);

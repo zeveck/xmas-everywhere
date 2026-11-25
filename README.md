@@ -47,7 +47,8 @@ the wheel to win it back. Six endings are waiting, one of them a secret.
 - Found a bug? Pause and pick "Report a bug", or press Ctrl+Shift+F (you'll need a GitHub account).
 
 There's no way to lose. The game saves itself in one of three slots (Load, from the title), along
-with every ending you find. A whole run takes about an hour and three quarters of play.
+with every ending you find. The Endings screen also shows "This run": your time, the locks you took and
+cleared, and every wish and First Contact answer you chose. A whole run takes about an hour and three quarters of play.
 
 ![On a phone](media/screenshots/phone.jpg)
 
@@ -81,6 +82,17 @@ Then, to build it:
 > /gamegen:gamegen --continue --out xmas-everywhere --budget 30 give each act a few early-ending lines by how far you got. --art-sheet --feedback --publish --no-confirm
 
 which gave each of Acts 2–4 four early-ending lines, by how far you got.
+
+After it went online, three player reports (filed from the game's own "Report a bug" button) were fixed with:
+
+> /gamegen:gamegen --out xmas-everywhere --fix all --publish --no-confirm
+
+which calmed the flashing Helpers tab (#1), made bug-report pictures show the whole screen (#2), and gave
+Act 1 Chief Toy Officer's swing, step stool and toy pile, with a Wrapping Station in the line (#3). Then:
+
+> /gamegen:gamegen --out xmas-everywhere --change add a stats card to the Endings screen: time played, locks taken and cleared, and every wish and First Contact answer you chose --publish --no-confirm
+
+which added "This run" to the Endings screen.
 
 gamegen designed the game, had review agents polish the design, made the art, animation, music and
 sound with these plugins, built it, and play-tested it:
@@ -129,4 +141,6 @@ then open http://localhost:8000.
 An idea by Rich Conlan, from Xmas Clicker (2017) and Sean's elves, built on Chief Toy Officer.
 
 Fonts: Berkshire Swash, Nunito, Courier Prime and Caveat, all under the SIL Open Font License
-(bundled in `game/fonts/` with their licenses).
+(bundled in `game/fonts/` with their licenses). Bug-report pictures use
+[html2canvas](https://html2canvas.hertzen.com) (MIT, bundled in `game/vendor/`). Act 1's swing, hammers and step
+stool come from Chief Toy Officer.
