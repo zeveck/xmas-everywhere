@@ -85,7 +85,7 @@ export const isDesktop = () => matchMedia('(min-width: 900px) and (min-height: 5
 export const currentTab = () => curTab;
 export function relayout() { if (!els.sec) return; const want = isDesktop() ? $('#shelf') : $('#panel'); if (els.sec.jobs.parentElement !== want) want.prepend(els.sec.jobs); showTab(curTab); }
 export function dot(tab, on = true) { if (curTab === tab) return; document.querySelectorAll(`.tab[data-tab="${tab}"]`).forEach((b) => b.classList.toggle('dotted', on)); }
-export function glowTab(tab, on) { document.querySelectorAll(`.tab[data-tab="${tab}"]`).forEach((b) => b.classList.toggle('glow', on)); }
+export function glowTab(tab, on) { document.querySelectorAll(`.tab[data-tab="${tab}"]`).forEach((b) => { if (b.classList.contains('glow') !== on) b.classList.toggle('glow', on); }); }
 
 function costHTML(n, ins) { return `<img src="${url(ins ? 'shared/icon-insight' : 'shared/icon-cookie')}" alt="">${fmt(n)}`; }
 export function update(S, extra = {}) {

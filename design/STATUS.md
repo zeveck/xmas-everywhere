@@ -22,6 +22,11 @@ Act 4, Xmas Everywhere: find life in the
 - `--continue` (exactly as typed): `/gamegen:gamegen --continue --out xmas-everywhere --budget 30 give each act a few early-ending lines by how far you got. --art-sheet --feedback --publish --no-confirm`
   (Applied: Endings now have four early lines per act for Acts 2–4, by rank band; Act 1 has no mid-act Declare.)
 
+- `--fix` (exactly as typed): `/gamegen:gamegen --out xmas-everywhere --fix all --publish --no-confirm`
+  - #1: Flickering tab (https://github.com/zeveck/xmas-everywhere/issues/1)
+  - #2: Screen cap doesn't capture the whole screen (https://github.com/zeveck/xmas-everywhere/issues/2)
+  - #3: Visual layout (https://github.com/zeveck/xmas-everywhere/issues/3)
+
 ## Settings
 
 - Feedback: on (from `--feedback`). Saves: 3 (from `--saves`). Both added to the design in round 2's refine.
