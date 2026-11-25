@@ -134,7 +134,7 @@ async function showActCard() {
   const a = G.act, T = ACT_TEXT[a]; A.loadAct(a);
   $('#actNo').textContent = 'Act ' + a; $('#actTitle').textContent = T.title; $('#actIntro').innerHTML = T.intro.map((l) => `<p>${l}</p>`).join('');
   const lg = $('#actLegacy'); const pic = loadLegacyPic(a - 1);
-  if (a > 1) { lg.hidden = false; lg.innerHTML = `${pic ? `<img src="${pic}" alt="The last act's finished stage">` : ''}<div>You bring ${['', 'The Old Workshop', 'The List Room', 'The Earthmas Deck'][a - 1]}. Your helpers came with you: worth ${G.S.legacyL} ${ACT_TEXT[a].help[ACTS[a].HELP[0][0]][0]} now, more with every rank.${a === 2 ? '<br><b>New:</b> the Declare Victory button is always on the top bar now. Press it whenever you like.' : ''}</div>`; }
+  if (a > 1) { lg.hidden = false; lg.innerHTML = `${pic ? `<img src="${pic}" alt="The last act's finished stage">` : ''}<div>You bring ${['', 'The Old Workshop', 'The List Room', 'The Earthmas Deck'][a - 1]}. Your helpers came with you: worth ${G.S.legacyL} ${ACT_TEXT[a].help[ACTS[a].HELP[0][0]][0]} now, more with every rank.${a === 2 ? '<br><b>New:</b> the Declare Victory button is on the top bar now. Press it whenever you like to end your Xmas, merrily.' : ''}</div>`; }
   else lg.hidden = true;
   show('actcard'); drawActcardBg(a);
   $('#actBegin').disabled = true; $('#actRetry').hidden = true;
@@ -419,7 +419,7 @@ function contactCard(el, rank) {
 const cap = (s) => s[0].toUpperCase() + s.slice(1);
 function tickerPush(t) { G.tickerLog = [...(G.tickerLog || []).slice(-8), t]; }
 function postcardCard() { return { type: 'postcard', prio: 3, render(el) { el.innerHTML = `<img class="postcard" src="${AS.url('shared/santa-beach')}" alt="Santa in a sun hat on a beach, waving"><p class="postcard-msg">Wish you were here, Pip. Is NOEL eating enough? It looked hungry. Merry Xmas, S.</p>`; el.appendChild(rowOf(btn('Back to work!', () => closeCard(), 'big'))); } }; }
-function howtoDeclareCard() { return { type: 'howto-declare', prio: 1, render(el) { el.innerHTML = `<img class="portrait" src="${AS.url('shared/icon-declare')}" alt=""><div class="big-title">Declare Victory &amp; Merry Xmas</div><p>From now on this button is always on the top bar. Press it whenever you like: your Xmas ends there, with the ending you've earned.</p><p>NOEL's strongest projects <b>lock</b> it, and say so before you buy them. Locks are cleared by building an override and getting enough hand-run helpers on the wheel.</p>`; el.appendChild(rowOf(btn('Got it', () => closeCard(), 'big'))); } }; }
+function howtoDeclareCard() { return { type: 'howto-declare', prio: 1, render(el) { el.innerHTML = `<img class="portrait" src="${AS.url('shared/icon-declare')}" alt=""><div class="big-title">Declare Victory &amp; Merry Xmas</div><p>From now on this button is always on the top bar. Press it whenever you like: your Xmas ends there, with the ending you've earned.</p><p>NOEL may try to stop you using it, if you're not careful. Keep a few hands on the wheel.</p>`; el.appendChild(rowOf(btn('Got it', () => closeCard(), 'big'))); } }; }
 
 // ---------- locks ----------
 let declareGlow = 0;
@@ -432,7 +432,7 @@ function lockCard(e) {
   return { type: 'lock-card', prio: 3, duck: true, render(el) {
     const S = G.S; const share = R.handShare(S); el.appendChild(speakerPortrait('noel'));
     const line = e ? (e.past4 ? `${LOCKS_TEXT[e.kind].line} ${PAST4}` : LOCKS_TEXT[e.kind].line) : 'The button is locked. Here is what it would take.';
-    el.insertAdjacentHTML('beforeend', `<p class="speech noel">“${line}”</p><div class="big-title">${S.locks.length ? `${S.locks.length} lock${S.locks.length > 1 ? 's' : ''} on your button` : 'Your button is free'}</div>`);
+    el.insertAdjacentHTML('beforeend', `<p class="speech noel">“${line}”</p><div class="big-title">${S.locks.length ? `${S.locks.length} lock${S.locks.length > 1 ? 's' : ''} on your Merry Xmas button` : 'Your Merry Xmas button is free'}</div>`);
     const rows = document.createElement('div'); rows.className = 'lock-rows';
     S.locks.forEach((l, i) => { const t = LOCKS_TEXT[l.kind]; const r = document.createElement('div'); r.className = 'lock-row'; r.innerHTML = `<img src="${AS.url('locks/' + (l.kind === 'lever' ? 'lever' : 'override-' + l.kind.slice(4)))}" alt=""><div class="lr-main"><b>${cap(t.name)}</b><br>Build: ${t.build}${l.cost != null ? ` (${fmt(l.cost)}\u00a0cookies)` : ''}</div>`;
       if (l.built) r.insertAdjacentHTML('beforeend', '<b>Built</b>'); else if (!S.ready || l.cost == null) r.insertAdjacentHTML('beforeend', '<small>NOEL is recalculating… (rank 4)</small>');

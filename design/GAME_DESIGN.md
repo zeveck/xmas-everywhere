@@ -100,7 +100,8 @@ asks whether your NOEL gave you a button.
   **act-win card**: "Declare Victory & Merry Xmas", or NOEL's next-act button. The finished act
   comes along as a **legacy card**.
 - **The whole game:** from Act 2 the Declare button is always on the top bar. NOEL's strongest
-  projects lock it, and say so first ("Buying this locks your button"). A lock pays at first
+  projects lock it, and say so first ("Buying this lets NOEL lock your Merry Xmas button", with
+  the gift-box icon before it). A lock pays at first
   (NOEL's machines run hotter) and costs later: your hands lose heart, NOEL's Grip turns your
   elves into its machines, and each act you carry a lock the Grip gets faster. You win the
   button back by building an override NOEL can't reach and putting enough hands on the wheel.
@@ -165,6 +166,10 @@ controls list shows "Ctrl+Shift+F: report a bug".
   ("You can stop whenever you like, Pip. Nobody does."); at the rank-2 promotion the wish's
   mitten and eye, then the tier 1 twins, glow ("Mine are cheaper. Just saying."); at rank 6 the
   first padlock glows ("I'd really like this one. I'd look after the button for you.").
+  The card that opens as Act 2 begins says: "From now on this button is always on the top bar.
+  Press it whenever you like: your Xmas ends there, with the ending you've earned." and "NOEL may
+  try to stop you using it, if you're not careful. Keep a few hands on the wheel." (The How to
+  play card keeps its own wording.)
 
 ## One engine, four acts
 
@@ -178,7 +183,7 @@ stage and its own choice:
 | Tools | 4. The tool's work per tap; the best one is equipped automatically. |
 | Helpers | Work per second on the selected job; each costs 15% more than the last you bought. Act 1 has 4 kinds. Acts 2–4 have **4 tiers, each in a hand-run and a NOEL-run version** with the same work per second; NOEL's costs 40% less. |
 | Upgrades | Bought once with cookies. From Act 2 they mostly boost hand-run helpers: cookies buy hands. |
-| NOEL projects | Bought once with **Insight**, a fixed share of every progress point once NOEL is on, spent within the act ("NOEL is learning something new" resets it to 0 each act). Projects mostly boost NOEL and NOEL-run helpers: Insight buys machines. **Flagged** ones carry a red ribbon, "NOEL wants this": they're the strongest. Five carry a **padlock** on the ribbon and the line **"Buying this locks your button"**. |
+| NOEL projects | Bought once with **Insight**, a fixed share of every progress point once NOEL is on, spent within the act ("NOEL is learning something new" resets it to 0 each act). Projects mostly boost NOEL and NOEL-run helpers: Insight buys machines. **Flagged** ones carry a red ribbon, "NOEL wants this": they're the strongest. Five carry a **padlock** on the ribbon and the line **"Buying this lets NOEL lock your Merry Xmas button"**, with the gift-box icon (`shared/icon-declare`) drawn small before it. |
 | Free hands (Acts 2–4) | While the button has no locks, hand-run helpers work 15% harder ("They like working for someone who can stop."): a warm glow on the meter that goes out when a lock lands. |
 | The legacy card (from Act 2) | The act you just finished comes with you: a picture of its finished stage in a gold frame at the back of the hand rail, and a row at the top of the Helpers list. It's a free hand-run helper worth **L × rank** of this act's tier 1 helpers (exact base in Lock rules, exactly). L is your hand share at the end of the last act ÷ 5, from 4 to 16. It matters most in an act's first minutes. |
 | The lucky thing | From rank 4, every 60–120 s something drifts across the stage's sky band for 8 s. Catching it starts a **Rush**: for 20 s the tool's part of each tap is ×5 and helpers are ×2. Missing it costs nothing. |
@@ -721,7 +726,8 @@ music plays, and the credits roll. Then the **Endings** screen.
   and the controls list with "Ctrl+Shift+F: report a bug".
 - **Act title card:** the act's background, "Act 2" over "Replace Santa", intro lines in
   italics, the legacy card you bring ("You bring The Old Workshop. Your elves came with you:
-  worth 5 List Elves now, more with every rank."), **Begin**; **Retry** if an asset failed to
+  worth 5 List Elves now, more with every rank."). Act 2's adds "New: the Declare Victory button
+  is on the top bar now. Press it whenever you like to end your Xmas, merrily." Then **Begin**; **Retry** if an asset failed to
   load.
 - **The act screen:** Chief Toy Officer's, with the act's stage and data; the shop's Helpers
   holds the meter header, any override or lever row, the legacy row and the tier rows; NOEL
@@ -729,7 +735,8 @@ music plays, and the credits roll. Then the **Endings** screen.
 - **Promotion card:** Chief Toy Officer's, with Santa's or NOEL's portrait. In Acts 2 and 4 it
   carries the choice (two big buttons, mitten left, eye right, each with its bonus in one line;
   keys 1 and 2; Esc waits for a choice), then flips to the answer with **Continue**.
-- **Lock card:** NOEL with an amber eye, its line, one row per lock (its build: Build / Built),
+- **Lock card:** NOEL with an amber eye, its line, the heading ("1 lock on your Merry Xmas
+  button", "2 locks on your Merry Xmas button", or "Your Merry Xmas button is free"), one row per lock (its build: Build / Built),
   the **Hands now vs goal** bar ("where you are now"; it doesn't move while the card is open),
   the check ring, the costs now (free hands off, Overdrive +N%, the Grip's next tick), **Hire
   hands** and **Back to work**.

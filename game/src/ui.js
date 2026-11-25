@@ -68,7 +68,7 @@ export function buildAct(a, S) {
   els.asleep = mk('p', 'asleep-note', 'NOEL is asleep on the top shelf. Plug it in (Upgrades) and it starts learning: it earns Insight from every bit of Cheer.'); els.sec.noel.appendChild(els.asleep);
   const glyphs = '◆●▲■✦◇○△□✧'; let gi = 0;
   for (const it of R.itemsOf(a).filter((x) => x.cur === 'i')) { const nm = T.noel[it.id];
-    const b = mk('button', 'item', `${it.f ? `<span class="ribbon${it.lock ? ' pad' : ''}">NOEL wants this</span>` : ''}<div class="noel-plate">${glyphs[gi++ % glyphs.length]}</div><div class="it-main"><div class="it-name">${nm[0]}</div><div class="it-desc">${nm[1]}</div>${it.lock ? '<div class="warn">Buying this locks your button</div>' : ''}</div><div class="it-side"><div class="it-cost"></div></div>`);
+    const b = mk('button', 'item', `${it.f ? `<span class="ribbon${it.lock ? ' pad' : ''}">NOEL wants this</span>` : ''}<div class="noel-plate">${glyphs[gi++ % glyphs.length]}</div><div class="it-main"><div class="it-name">${nm[0]}</div><div class="it-desc">${nm[1]}</div>${it.lock ? `<div class="warn"><img class="warn-icon" src="${url('shared/icon-declare')}" alt="">Buying this lets NOEL lock your Merry Xmas button</div>` : ''}</div><div class="it-side"><div class="it-cost"></div></div>`);
     b.dataset.buy = 'item:' + it.id; b.addEventListener('click', () => H.buy('item', it.id, b)); els.sec.noel.appendChild(b); els.items[it.id] = b; }
   $('#btnDeclare').hidden = a < 2;
   relayout();

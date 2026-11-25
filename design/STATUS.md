@@ -29,6 +29,8 @@ Act 4, Xmas Everywhere: find life in the
 
 - `--change` (exactly as typed): `/gamegen:gamegen --out xmas-everywhere --change add a stats card to the Endings screen: time played, locks taken and cleared, and every wish and First Contact answer you chose --publish --no-confirm`
 
+- `--change` (exactly as typed): `/gamegen --out xmas-everywhere --change reword the Declare Victory button's introduction and warnings, exactly as follows, then check those screens at every size and publish. --publish --no-confirm` (four numbered wordings: Act 2 title card "New:" line; Act 2 how-to card second paragraph; padlock-project warning with the gift-box icon; Lock card heading. How to play left as is.) Then: `After than, publish no-confirm.`
+
 ## Settings
 
 - Feedback: on (from `--feedback`). Saves: 3 (from `--saves`). Both added to the design in round 2's refine.
