@@ -239,6 +239,13 @@ Chief Toy Officer, with NOEL and one more factory buildout.
   in front of the painted jars and clear of the tree and its star. It's a small walnut-and-brass
   box with an empty dark lens ring; the eye inside follows the hammer. It starts dusty and dark.
   "Plug In NOEL" wakes it: the dust puffs off and the eye lights.
+- **The swing and the pile (changed for issue #3, as in the published Chief Toy Officer):** Pip stands on
+  his step stool by the bench and uses Chief Toy Officer's swing frames and hammers: the hammer upright at rest,
+  raised high, and brought down so its head lands on the toy's top (the toy sits where the strike reaches),
+  with a spin after each finished toy. The pile under the tree holds **the toys you made** (40 spots, the
+  most common kind giving way to new ones so it keeps its variety). Once the **Wrapping Station** is bought it
+  stands in the line beside the tree and every other toy arrives as a wrapped present. Act 2's clerk stands
+  on the same stool and brings his stamp straight down onto the file.
 - **Tap:** hammer the toy. **Ranks, toys, hammers and upgrades:** Chief Toy Officer's, word for
   word (ranks Assistant Junior Toy Maker … Chief Toy Officer; toys Wooden Tractor … Smartphone;
   hammers Cheap, Heavy 150 at rank 3, Supreme 6,000 at rank 6, Thunder Mallet 40,000 at rank 8;

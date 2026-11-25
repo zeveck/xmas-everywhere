@@ -7,7 +7,7 @@ import * as R from './rules.js';
 export const W = 800, H = 600;
 const px = (x) => x * W / 100, py = (y) => y * H / 100;
 let cv, cx, dpr = 1, cssW = 1, cssH = 1;
-const fx = { parts: [], nums: [], rings: [], splats: [], squash: 0, swing: -1, swingT: 0, bob: 0, shake: 0, eyeTo: [0.5, 0.5], eyeAt: [0.5, 0.5], blink: 0,
+const fx = { spinAt: -9, popAt: -9, parts: [], nums: [], rings: [], splats: [], squash: 0, swing: -1, swingT: 0, bob: 0, shake: 0, eyeTo: [0.5, 0.5], eyeAt: [0.5, 0.5], blink: 0,
   flash: 0, presents: [], bellAt: null, recoil: 0, arrivals: {}, dim: 0, noelBright: 0, wakeT: -1, transition: null };
 let spot = { u: 0.1, v: 0.1, from: [0.1, 0.1], to: [0.1, 0.1], t: 0, resting: true };
 let tNow = 0;
@@ -129,22 +129,61 @@ function placeFigures(c, act, list, box, row, S, noel) {
 }
 
 // ---------- Pip and his tool ----------
-function drawPipSwing(c, act, S) {
-  const set = act === 1 ? 'pip-swing' : 'pip-clerk-swing'; const frame = fx.swing >= 0 ? Math.min(3, fx.swing) : 0;
-  const im = img(`sprites/${set}/${frame}`) || img(`sprites/${set}/0`); const fallback = act === 2 ? img('shared/pip-clerk') : null;
-  const x = px(12), w = px(40), y = py(98) - w; // square canvas, 40% wide, foot at 98
-  if (!im) { if (fallback) drawFit(c, fallback, px(20), py(45), px(24), py(53)); return; }
-  c.drawImage(im, x, y, w, w);
-  const piv = data(`sprites/${set}/pivots`); const fr = piv && piv.frames && piv.frames[frame]; if (!fr) return;
-  const s = w / 512; const tool = R.toolIdx(S); const hand = img(toolHandFile(act, tool)); if (!hand) return;
-  let gx = 256, gy = 380, dist = 300, axis = 0, target = 150, ang = fr.angle || 0;
-  if (act === 1) { const h = data('act1/hammers')?.hammers?.[tool + 1]; if (h) { [gx, gy] = h.grip; dist = Math.hypot(h.head[0] - gx, h.head[1] - gy); axis = h.axisAngle || 0; } }
-  else { const st = data('act2/stamps')?.['stamp-' + (tool + 1)]; target = 118; ang = ang * 0.12; if (st) { [gx, gy] = st.grip; dist = Math.hypot(st.face[0] - gx, st.face[1] - gy); } }
-  const ts = s * target / dist; // every tool the same length in the fist
-  c.save(); c.translate(x + fr.pivot[0] * s, y + fr.pivot[1] * s); c.rotate((ang - axis) * Math.PI / 180);
-  c.drawImage(hand, -gx * ts, -gy * ts, 512 * ts, 512 * ts); c.restore();
-  if (fr.fist) { const [fx0, fy0, fw, fh] = fr.fist; c.drawImage(im, fx0 / 512 * im.width, fy0 / 512 * im.height, fw / 512 * im.width, fh / 512 * im.height, x + fx0 * s, y + fy0 * s, fw * s, fh * s); }
+// Pip on his step stool, swinging the current tool onto the job (Chief Toy Officer's swing): the frames' pivots give the
+// fist; on the strike the tool is aimed so its head (hammer) or face (stamp) lands on the job's top, and the job sits where it can.
+const POSE = {
+  1: { foot: 86.2, stool: [23.6, 17, 98.5], toyFoot: 68.5, toyW: 14, toyRange: [46, 62], kind: 'hammer', len: 0.35 },
+  2: { foot: 81.6, stool: [23.6, 17, 93.8], toyFoot: 69, toyW: 11.5, toyRange: [42, 60], kind: 'stamp', len: 0.25 },
+};
+const SWING = [[0, 1], [45, 2], [125, 3], [190, -1]]; // ms -> frame
+function pivotsOf(set) { const d = data(`sprites/${set}/pivots`); if (!d || !d.frames) return null;
+  return d.frames.map((f) => ({ fist: f.pivot || (f.fist && f.fist.length === 2 ? f.fist : null), crop: f.fistCrop || (f.fist && f.fist.length === 4 ? f.fist : null), angle: f.angle || 0 })); }
+function toolSpec(act, tool) {
+  if (act === 1) { const h = data('act1/hammers')?.['hammer-' + (tool + 1)]; return h ? { grip: h.grip, tip: h.head, tipEdge: h.headBottom ?? h.head[1] + 60 } : { grip: [256, 435], tip: [256, 100], tipEdge: 160 }; }
+  const st = data('act2/stamps')?.['stamp-' + (tool + 1)]; return st ? { grip: st.grip, tip: st.face, tipEdge: st.face[1] } : { grip: [254, 219], tip: [254, 480], tipEdge: 480 };
 }
+// where the job sits and the strike angle, for this act, tool and job
+let poseCache = null;
+function poseLayout(act, S) {
+  const P = POSE[act]; const tool = R.toolIdx(S); const key = act + '|' + tool + '|' + S.job;
+  if (poseCache && poseCache.key === key) return poseCache;
+  const set = act === 1 ? 'pip-swing' : 'pip-clerk-swing'; const pv = pivotsOf(set); const w = px(40), x = px(12), y = py(P.foot) - w * (507 / 512); const k = w / 512; // foot = the lowest opaque pixel (row 507)
+  const pipH = w * 0.986, len = P.len * pipH; const spec = toolSpec(act, tool);
+  const jim = img(jobFile(act, S.job)); const jw = px(P.toyW), jh = jim ? jw * jim.height / jim.width : jw; const top = py(P.toyFoot) - jh * 0.92;
+  let cx = px((P.toyRange[0] + P.toyRange[1]) / 2), strike = act === 1 ? 85 : 0;
+  const f2 = pv && pv[2] && pv[2].fist;
+  if (f2) {
+    const fxp = x + f2[0] * k, fyp = y + f2[1] * k;
+    if (P.kind === 'hammer') { // head comes down on the top: the head's centre a little above the top
+      const headHalf = (spec.tipEdge - spec.tip[1]) / (spec.grip[1] - spec.tip[1]) * len; const aimY = top - headHalf * 0.3; const dy = fyp - aimY;
+      const dx = Math.sqrt(Math.max(0, len * len - dy * dy)); cx = Math.min(px(P.toyRange[1]), Math.max(px(P.toyRange[0]), fxp + dx)); strike = Math.atan2(cx - fxp, dy) * 180 / Math.PI;
+    } else { // the stamp's face comes down onto the top of the file
+      const aimY = top + jh * 0.18; const dy = aimY - fyp; const dx = Math.sqrt(Math.max(0, len * len - dy * dy));
+      cx = Math.min(px(P.toyRange[1]), Math.max(px(P.toyRange[0]), fxp + dx)); strike = -Math.atan2(cx - fxp, Math.max(1, dy)) * 180 / Math.PI;
+    }
+  }
+  poseCache = { key, x, y, w, k, len, spec, set, pv, cx, strike, foot: py(P.toyFoot), jw, jh };
+  return poseCache;
+}
+function swingFrame() { if (fx.swing < 0) return 0; const t = fx.swingT * 1000; let f = 0; for (const [ms, fr] of SWING) if (t >= ms) f = fr; return f < 0 ? 0 : f; }
+function drawStool(c, act) { const P = POSE[act]; const st = img('act1/stool'); if (!st) return; const w = px(P.stool[1]), h = w * st.height / st.width; c.drawImage(st, px(P.stool[0]), py(P.stool[2]) - h, w, h); }
+function drawPipSwing(c, act, S) {
+  const L = poseLayout(act, S); const frame = swingFrame();
+  const im = img(`sprites/${L.set}/${frame}`) || img(`sprites/${L.set}/0`);
+  if (!im) { const fb = act === 2 ? img('shared/pip-clerk') : null; if (fb) drawFit(c, fb, px(20), py(40), px(24), py(53)); return; }
+  c.drawImage(im, L.x, L.y, L.w, L.w);
+  const fr = L.pv && L.pv[frame]; const hand = img(toolHandFile(act, R.toolIdx(S))); if (!fr || !fr.fist || !hand) return;
+  let ang = frame === 2 ? L.strike : frame === 3 ? L.strike + (act === 1 ? 8 : -6) : (act === 1 ? fr.angle : fr.angle * 0.15);
+  const sp = (tNow - fx.spinAt) / 0.38; if (act === 1 && sp >= 0 && sp < 1 && frame === 0) ang += 360 * (1 - (1 - sp) ** 2); // the spin after a finished toy
+  const sp1 = L.spec; const hs = L.len / Math.abs(sp1.tip[1] - sp1.grip[1]);
+  c.save(); c.translate(L.x + fr.fist[0] * L.k, L.y + fr.fist[1] * L.k); c.rotate(ang * Math.PI / 180);
+  c.drawImage(hand, -sp1.grip[0] * hs, -sp1.grip[1] * hs, 512 * hs, 512 * hs); c.restore();
+  if (fr.crop) { const [cx0, cy0, cw, ch] = fr.crop, sx = im.width / 512; c.drawImage(im, cx0 * sx, cy0 * sx, cw * sx, ch * sx, L.x + cx0 * L.k, L.y + cy0 * L.k, cw * L.k, ch * L.k); }
+}
+function drawJobAtPose(c, act, S, key) { const L = poseLayout(act, S); const im = img(key || jobFile(act, S.job)); if (!im) return; const sq = fx.squash;
+  const pop = (tNow - fx.popAt) / 0.42; const lift = pop >= 0 && pop < 1 ? Math.sin(pop * Math.PI) * py(4) : 0; const ps = pop >= 0 && pop < 1 ? 1 + 0.15 * Math.sin(pop * Math.PI) : 1;
+  c.save(); c.translate(L.cx, L.foot - lift); c.scale((1 + sq * 0.12) * ps, (1 - sq * 0.16) * ps); c.drawImage(im, -L.jw / 2, -L.jh, L.jw, L.jh); c.restore(); }
+export const jobTop = (act, S) => { const L = poseLayout(act, S); return [L.cx, L.foot - L.jh * 0.6]; };
 function drawPipStill(c, key, S) { const im = img(key); const b = fx.bob; c.save(); const x = px(0), y = py(48), w = px(16), h = py(50);
   c.translate(x + w / 2, y + h); c.scale(1 + b * 0.04, 1 - b * 0.05); drawFit(c, im, -w / 2, -h, w, h); c.restore(); }
 
@@ -160,8 +199,15 @@ function treeLights(c, S, allOn) {
       r(); }
   }
 }
-function pileSlots(n) { let k = 0; for (let s = 1; s <= 40; s++) if (n >= 2 ** (s / 4)) k = s; return k; }
-const PILE = (() => { const r = rand(42); const a = []; for (let i = 0; i < 40; i++) { const row = Math.floor(i / 8); a.push([66 + 4 + (i % 8) * 3.8 + (row % 2) * 1.9 + r() * 1.2, 97 - row * 3.4 - r() * 1, 1 + (i * 7) % 6, 4.2 + r() * 1.6]); } return a; })();
+function pileCount(n) { let k = 0; while (k < 40 && n >= 2 ** ((k + 1) / 4)) k++; return k; }
+const PILE = (() => { const x0 = 66, x1 = 100, y1 = 99; const rows = [[12, 0], [10, 1], [8, 2], [6, 3], [4, 4]]; const slots = []; let k = 0;
+  for (const [n, r] of rows) { const rowW = (x1 - x0) * (1 - r * 0.13), left = x0 + ((x1 - x0) - rowW) / 2 + 1;
+    for (let i = 0; i < n; i++) { const j = ((k * 37) % 7) / 7 - 0.5; slots.push({ cx: left + (rowW - 2) * ((i + 0.5) / n) + j * 0.8, foot: y1 - 0.5 - r * 3.6 + Math.abs(j) * 0.6, size: 5.2 - r * 0.35 + (((k * 53) % 5) / 5) * 1.6, r, i, n }); k++; } }
+  return slots.map((s, i) => [s.r * 100 + Math.abs(s.i - (s.n - 1) / 2), i]).sort((a, b) => a[0] - b[0]).map((a) => slots[a[1]]).slice(0, 40); })();
+function pileImg(entry, i) { return entry >= 100 ? img('act1/presents-' + (1 + (i % 6))) : img(jobFile(1, entry)); }
+function drawPile(c, S, shown) { const list = S.pileToys && S.pileToys.length ? S.pileToys : null;
+  for (let i = shown - 1; i >= 0; i--) { const sl = PILE[i]; const e = list ? list[i % list.length] : 100; const im = pileImg(e, i); if (!im) continue;
+    const w = px(sl.size), h = w * im.height / im.width; c.drawImage(im, px(sl.cx) - w / 2, py(sl.foot) - h, w, h); } }
 function drawWorkshop(c, S, o) {
   cover(c, img('act1/workshop-bg'));
   if (fx.dim) { c.fillStyle = `rgba(5,5,20,${0.55 * fx.dim})`; c.fillRect(0, 0, W, H); }
@@ -184,12 +230,15 @@ function drawWorkshop(c, S, o) {
   if (S.rank >= 3 || S.woke) { if (fx.wakeT >= 0 && tNow - fx.wakeT < 1.2) puff(c, px(92), py(16), tNow - fx.wakeT); drawNoel(c, 1, S); }
   // bench
   const bench = img('act1/bench'); if (bench) { const w = px(40), h = w * bench.height / bench.width; c.drawImage(bench, px(36), py(91) - h, w, h); }
-  // pile
-  const shown = o.pileOverride ?? pileSlots(S.pile || 0);
-  for (let i = 0; i < shown; i++) { const [x, y, k, s] = PILE[i]; const im = img('act1/presents-' + k); if (im) c.drawImage(im, px(x) - px(s) / 2, py(y) - px(s), px(s), px(s)); }
+  // the wrapping station joins the line once it's bought: toys come out of it as presents
+  if (S.own && S.own.includes('wrappingStation')) { const ws = img('act1/upg-wrapping-station'); if (ws) { const w = px(9); c.drawImage(ws, px(62.5), py(93) - w, w, w); } }
+  // the pile: the toys you made (and presents, once wrapped)
+  const shown = o.pileOverride ?? pileCount(S.pile || 0);
+  drawPile(c, S, shown);
   if ((S.pile || 0) > 990 && shown >= 40) tag(c, px(92), py(78), S.pile);
   // the toy on the bench
-  if (!o.noToy) drawJobOnSpot(c, jobFile(1, S.job), 45, 68.5, 14);
+  drawStool(c, 1);
+  if (!o.noToy) drawJobAtPose(c, 1, S);
   drawPipSwing(c, 1, S);
 }
 function drawBob(c, key, [x, y, w, h], i, noel) { const b = noel ? Math.sin(tNow * 6 + i) * 0.6 : Math.abs(Math.sin(tNow * 2.4 + i)) * -2.2; drawFit(c, img(key), px(x), py(y) + b, px(w), py(h)); }
@@ -206,9 +255,10 @@ function drawListRoom(c, S, o) {
   drawRails(c, 2, S, o.legacy);
   const desk = img('act2/clerk-desk'); if (desk) { const w = px(40), h = w * desk.height / desk.width; c.drawImage(desk, px(36), py(91) - h, w, h); }
   // the file on the blotter
-  if (!o.noToy) drawJobOnSpot(c, o.fileKey || jobFile(2, S.job), 45.5, 69, 13);
+  if (!o.noToy) drawJobAtPose(c, 2, S, o.fileKey);
   for (const s of fx.splats) { const k = (tNow - s.t) / 0.6; if (k > 1) continue; c.save(); c.translate(s.x, s.y); c.rotate(s.rot); c.globalAlpha = 1 - k * k; const sc = 1 + (1 - ease(k * 3)) * 0.5; c.scale(sc, sc);
     c.font = '900 30px Nunito'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.lineWidth = 4; c.strokeStyle = s.nice ? '#1d6a32' : '#8a1414'; c.strokeRect(-62, -20, 124, 40); c.fillStyle = s.nice ? '#22803a' : '#a51c1c'; c.fillText(s.nice ? 'NICE' : 'NAUGHTY', 0, 2); c.restore(); }
+  drawStool(c, 2);
   drawPipSwing(c, 2, S);
   // the Nice dial
   const m = R.mul(S); const pct = Math.round(m.nice * 100);
@@ -351,18 +401,18 @@ function drawLucky(c, S, act) {
 export function onTap(S, act, x, y, value, o = {}) {
   fx.squash = 1; fx.swing = 0; fx.swingT = 0; fx.bob = 1; fx.eyeTo = [x / W, y / H]; fx.recoil = 1;
   const big = o.spot; const n = big ? 14 : 7;
-  const tx = act <= 2 ? px(52) : x, ty = act <= 2 ? py(56) : y;
+  const jt = act <= 2 ? jobTop(act, S) : null; const tx = jt ? jt[0] : x, ty = jt ? jt[1] : y;
   for (let i = 0; i < n && fx.parts.length < 40; i++) { const a = Math.random() * Math.PI * 2, s = 80 + Math.random() * 160 * (big ? 1.6 : 1);
     fx.parts.push({ x: tx, y: ty, vx: Math.cos(a) * s, vy: Math.sin(a) * s - 80, t: 0, life: 0.5 + Math.random() * 0.3, col: act === 4 ? '#7affc0' : act === 3 ? '#ffd76a' : act === 2 ? '#fff4c8' : '#ffcf6a' }); }
   fx.nums.push({ x: tx + (Math.random() * 30 - 15), y: ty - 20, t: 0, txt: '+' + fmtShort(value), big });
   if (fx.nums.length > 14) fx.nums.shift();
-  if (act === 2) fx.splats.push({ x: px(52) + Math.random() * 30 - 15, y: py(62) + Math.random() * 10, t: tNow, rot: Math.random() * 0.5 - 0.25, nice: Math.random() < R.mul(S).nice });
+  if (act === 2) fx.splats.push({ x: jobTop(2, S)[0] + Math.random() * 20 - 10, y: jobTop(2, S)[1] + 6 + Math.random() * 8, t: tNow, rot: Math.random() * 0.5 - 0.25, nice: Math.random() < R.mul(S).nice });
   if (fx.splats.length > 4) fx.splats.shift();
   if (act === 3) { fx.bellAt = { x, y, t: tNow }; fx.rings.push({ x, y, t: 0, col: big ? '255,220,90' : '255,214,120', max: big ? 90 : 50 }); }
   if (act === 4) fx.rings.push({ x, y, t: 0, col: '90,255,160', max: 70 });
   if (o.heavy) fx.shake = 0.25;
 }
-export function onJobDone(act, n) { fx.flash = 1; fx.presents.push({ t: 0, n }); if (fx.presents.length > 3) fx.presents.shift(); }
+export function onJobDone(act, n, item) { fx.flash = 1; fx.popAt = tNow; if (n === 1) fx.spinAt = tNow + 0.05; fx.presents.push({ t: 0, n, item }); if (fx.presents.length > 3) fx.presents.shift(); }
 export function onHelperAdded(id) { if (!fx.arrivals[id]) fx.arrivals[id] = tNow; }
 export function onNoelBright() { fx.noelBright = 1; }
 export function onWake() { fx.wakeT = tNow; }
@@ -382,7 +432,7 @@ function drawFx(c, act, dt) {
   // a finished job: a present arcs to the pile (Act 1), a pop elsewhere
   for (const p of fx.presents) p.t += dt; fx.presents = fx.presents.filter((p) => p.t < 0.7);
   for (const p of fx.presents) { const k = p.t / 0.7;
-    if (act === 1) { const im = img('act1/presents-' + (1 + (p.n % 6))); const x = px(52) + (px(84) - px(52)) * k, y = py(56) - Math.sin(k * Math.PI) * 120 + (py(88) - py(56)) * k; if (im) c.drawImage(im, x - 18, y - 18, 36, 36); }
+    if (act === 1) { const im = p.item != null ? pileImg(p.item, p.n) : img('act1/presents-1'); const x0 = poseCache ? poseCache.cx : px(52); const x = x0 + (px(84) - x0) * k, y = py(56) - Math.sin(k * Math.PI) * 120 + (py(88) - py(56)) * k; if (im) { const w = 40, h = w * im.height / im.width; c.drawImage(im, x - w / 2, y - h / 2, w, h); } }
     else { c.save(); c.globalAlpha = 1 - k; c.strokeStyle = act === 4 ? '#7affc0' : '#ffe08a'; c.lineWidth = 5; const [x, y] = act === 2 ? [px(52), py(60)] : act === 3 ? [globeGeom().cx, globeGeom().cy] : [viewport().cx, viewport().cy]; c.beginPath(); c.arc(x, y, 20 + k * 80, 0, Math.PI * 2); c.stroke(); c.restore(); }
     if (p.n > 1 && p.t < 0.6) { c.save(); c.font = '900 26px Nunito'; c.textAlign = 'center'; c.fillStyle = '#ffe27a'; c.strokeStyle = '#3a2415'; c.lineWidth = 4; const t = '×' + fmtShort(p.n); const y = (act <= 2 ? py(46) : py(20)) - p.t * 40; c.strokeText(t, px(52), y); c.fillText(t, px(52), y); c.restore(); }
   }
@@ -390,7 +440,7 @@ function drawFx(c, act, dt) {
 }
 function decay(dt) {
   fx.squash = Math.max(0, fx.squash - dt * 7); fx.bob = Math.max(0, fx.bob - dt * 6); fx.recoil = Math.max(0, fx.recoil - dt * 6); fx.flash = Math.max(0, fx.flash - dt * 4); fx.noelBright = Math.max(0, fx.noelBright - dt * 1.5);
-  if (fx.swing >= 0) { fx.swingT += dt; fx.swing = Math.floor(fx.swingT / 0.04); if (fx.swing > 3) fx.swing = -1; }
+  if (fx.swing >= 0) { fx.swingT += dt; if (fx.swingT >= 0.19) fx.swing = -1; }
   fx.eyeAt[0] += (fx.eyeTo[0] - fx.eyeAt[0]) * Math.min(1, dt * 5); fx.eyeAt[1] += (fx.eyeTo[1] - fx.eyeAt[1]) * Math.min(1, dt * 5);
   if (fx.blink > 0) fx.blink = Math.max(0, fx.blink - dt * 5); else if (Math.random() < dt * 0.25) fx.blink = 1;
   fx.shake = Math.max(0, fx.shake - dt);

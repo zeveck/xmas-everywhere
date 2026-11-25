@@ -117,7 +117,7 @@ function newGame(id) {
   }
   deleteSlot(target); slot = target;
   G = { v: 1, act: 1, S: R.newAct(1), playTime: 0, seen: {}, finished: null, phase: 'play', lastSeen: Date.now(), legacy: {} };
-  G.S.pile = 0; G.begun = false; saveNow(); store.set(slotKey(slot, 'cp1'), G); showActCard();
+  G.S.pile = 0; G.S.pileToys = []; G.begun = false; saveNow(); store.set(slotKey(slot, 'cp1'), G); showActCard();
 }
 function loadSlot(id) {
   const d = saves.load(id); if (!d || !d.S || !d.S.n || !d.act) { toast('This save can\'t be read'); return; }
@@ -211,7 +211,7 @@ let glowHelper = null;
 function handleEvents() {
   const S = G.S; const ev = S.events.splice(0);
   for (const e of ev) {
-    if (e.type === 'done') { if (G.act === 1) S.pile = (S.pile || 0) + e.n; ST.onJobDone(G.act, e.n); A.sfx(['', 'toy-done', 'file-done', 'holdout-won', 'first-contact'][G.act], { vol: G.act === 4 ? 0.35 : 1 }); A.sfx('cookie-clink', { vol: 0.5 }); if (G.act === 1) A.sfx('present-rustle', { vol: 0.5 });
+    if (e.type === 'done') { let item = null; if (G.act === 1) { S.pile = (S.pile || 0) + e.n; item = addToPile(S, e.job, e.n); } ST.onJobDone(G.act, e.n, item); A.sfx(['', 'toy-done', 'file-done', 'holdout-won', 'first-contact'][G.act], { vol: G.act === 4 ? 0.35 : 1 }); A.sfx('cookie-clink', { vol: 0.5 }); if (G.act === 1) A.sfx('present-rustle', { vol: 0.5 });
       if (G.act === 2 && !G.seen.firstFile) { G.seen.firstFile = true; declareGlow = 6; setTicker('You can stop whenever you like, Pip. Nobody does.'); } }
     else if (e.type === 'rank') { A.sfx('fanfare'); if (ACT_TEXT[G.act].speaker(e.rank) === 'santa') setTimeout(() => A.voice('santa-hohoho'), 300); queuePromotion(e.rank); saveSoon(); }
     else if (e.type === 'final') { startFinale(); }
@@ -228,6 +228,16 @@ function handleEvents() {
   if (G.act === 4 && S.rank === 10 && S.locks.length && !G.seen.warn4) { G.seen.warn4 = true; setTicker('Leave the button with me, Pip. Just until the end.'); A.sfx('lock', { vol: 0.5 }); $('#btnDeclare').classList.add('clank'); setTimeout(() => $('#btnDeclare').classList.remove('clank'), 600); }
   refreshBanner();
 }
+// The pile under the tree keeps the toys you made (40 at most, newest replacing older ones); once the Wrapping
+// Station is in the line, every other toy arrives wrapped.
+function addToPile(S, job, n) { if (!S.pileToys) S.pileToys = []; let last = job;
+  for (let k = 0; k < Math.min(3, n); k++) { const wrapped = S.own.includes('wrappingStation') && (S.stats.made + k) % 2 === 0; last = wrapped ? 100 + job : job;
+    if (S.pileToys.length < 40) { S.pileToys.push(last); continue; }
+    // full: a new toy takes the place of one of the most common kind, so the pile keeps its variety
+    const count = {}; for (const t of S.pileToys) { const j = t % 100; count[j] = (count[j] || 0) + 1; }
+    const top = +Object.keys(count).sort((a, b) => count[b] - count[a])[0]; if (top === job && count[job] > 1 && Object.keys(count).length > 1 && (S.stats.made + k) % 3) continue;
+    const spots = []; S.pileToys.forEach((t, i) => t % 100 === top && spots.push(i)); S.pileToys[spots[(S.stats.made * 7 + k) % spots.length]] = last; }
+  return last; }
 function setTicker(t) { G.thinking = t; const el = $('#tickerText'); el.textContent = t; $('#ticker').classList.toggle('empty', !t); A.sfx('noel-speak', { vol: 0.5 }); ST.onNoelBright(); }
 let saveSoonT = null; function saveSoon() { clearTimeout(saveSoonT); saveSoonT = setTimeout(saveNow, 200); }
 function refreshBanner() {

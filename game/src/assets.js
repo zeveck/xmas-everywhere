@@ -18,6 +18,7 @@ export function actFiles(a) {
   for (let i = 0; i < 4; i++) { f.push(toolFile(a, i)); if (a <= 2) f.push(toolHandFile(a, i)); }
   for (const h of ACTS[a].HELP) f.push(helperFile(a, h[0]));
   for (const u of ACTS[a].UPG) f.push(upgFile(a, u[0]));
+  if (a <= 2) f.push('act1/stool');
   if (a === 1) f.push('act1/bench', 'act1/tree', 'act1/tree-star', 'act1/sleigh', 'act1/finale-sky', ...[1, 2, 3, 4, 5, 6].map((i) => `act1/presents-${i}`));
   if (a === 2) f.push('act2/clerk-desk', 'shared/pip-clerk', 'shared/santa-slumped', 'act1/tree-star');
   if (a === 3) f.push('shared/pip-coat', 'act3/moon-hat', 'act3/bow', 'shared/santa-beach', 'act3/globe-map');
