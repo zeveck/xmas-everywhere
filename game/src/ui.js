@@ -65,7 +65,7 @@ export function buildAct(a, S) {
   // NOEL
   const head = mk('div', 'noel-head', `<canvas width="128" height="128"></canvas><div><div class="ins"><img src="${url('shared/icon-insight')}" alt=""><span>0</span></div><div class="thinking"></div></div>`);
   els.sec.noel.appendChild(head); els.noelHead = head; els.noelEye = head.querySelector('canvas');
-  els.asleep = mk('p', 'asleep-note', 'NOEL is asleep on the top shelf. Plug it in (Upgrades) and it starts learning: it earns Insight from every bit of Cheer.'); els.sec.noel.appendChild(els.asleep);
+  els.asleep = mk('p', 'asleep-note', 'NOEL is asleep on the top shelf. From rank 3 you can plug it in (Upgrades), and it starts learning: it earns Insight from every bit of Cheer.'); els.sec.noel.appendChild(els.asleep);
   const glyphs = '◆●▲■✦◇○△□✧'; let gi = 0;
   for (const it of R.itemsOf(a).filter((x) => x.cur === 'i')) { const nm = T.noel[it.id];
     const b = mk('button', 'item', `${it.f ? `<span class="ribbon${it.lock ? ' pad' : ''}">NOEL wants this</span>` : ''}<div class="noel-plate">${glyphs[gi++ % glyphs.length]}</div><div class="it-main"><div class="it-name">${nm[0]}</div><div class="it-desc">${nm[1]}</div>${it.lock ? `<div class="warn"><img class="warn-icon" src="${url('shared/icon-declare')}" alt="">Buying this lets NOEL lock your Merry Xmas button</div>` : ''}</div><div class="it-side"><div class="it-cost"></div></div>`);
