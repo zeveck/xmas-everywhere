@@ -80,5 +80,5 @@ Act 4, Xmas Everywhere: find life in the
 - [x] #8 NOEL's wake line points at the NOEL tab instead of "check Comet"
 - [x] #9: full sweep (all 40 ranks: card, play screen, every shop tab; title, how-to, load, endings, pause, settings, credits) at 6 sizes found the Twice-Checker rows, the hands meter line, the rank bar and twin-card counts at 800×600, the job strip (cut names on phones; on 667×375 it pushed the shop off screen) and, on phones, long rank titles pushing gear/mute off screen (live too). All fixed; final sweep clean at all six sizes. Reviews: two fresh reviewers (fixes #4–#8; #9) — follow-ups fixed (pile contents, hammer aim on the train, NOEL hints, hyphen joiner, held counts).
 - [x] Act 1 replays 10/10 twice on the new code (Acts 2–4 unchanged in play: text/CSS only). Commits d40b754…, each Fixes #N.
-- [ ] Publish
+- [x] Published 2026-11-26 (deploy OK; issues #4–#9 closed by the push); live check desktop 1280×800 and iPhone 15 (title, Act 1 rank 6 train set, Act 2 ranks 2 and 6), no errors, scanner clean; art page labels updated (gallery e5328e4).
 
