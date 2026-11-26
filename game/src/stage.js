@@ -155,7 +155,7 @@ function poseLayout(act, S) {
   if (poseCache && poseCache.key === key) return poseCache;
   const set = act === 1 ? 'pip-swing' : 'pip-clerk-swing'; const pv = pivotsOf(set); const w = px(40), x = px(12), y = py(P.foot) - w * (507 / 512); const k = w / 512; // foot = the lowest opaque pixel (row 507)
   const pipH = w * 0.986, len = P.len * pipH; const spec = toolSpec(act, tool);
-  const jim = img(jobFile(act, S.job)); const jw = px(P.toyW) * toyScale(act, S.job), jh = jim ? jw * jim.height / jim.width : jw; const top = py(P.toyFoot) - jh * 0.92;
+  const jim = img(jobFile(act, S.job)); const jw = px(P.toyW) * toyScale(act, S.job), jh = jim ? jw * jim.height / jim.width : jw; const top = py(P.toyFoot) - jh * toyTopFrac(act, S.job);
   let cx = px((P.toyRange[0] + P.toyRange[1]) / 2), strike = act === 1 ? 85 : 0;
   const f2 = pv && pv[2] && pv[2].fist;
   if (f2) {
