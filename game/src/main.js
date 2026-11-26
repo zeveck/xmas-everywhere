@@ -222,7 +222,7 @@ function handleEvents() {
     else if (e.type === 'unlock') { A.sfx('unlock'); A.sfx('check-complete'); setTicker(UNLOCK_LINE); toast(UNLOCK_LINE, 'noel'); declareGlow = 2; saveSoon(); }
     else if (e.type === 'cleared') { runLog().locksCleared += e.removed || 0; if (e.left) { A.sfx('unlock'); toast('Some chains fell off. Build the rest to clear the button.'); } }
     else if (e.type === 'built') { A.sfx(e.kind === 'lever' ? 'lever-clunk' : 'override-built'); if (e.kind !== 'lever') A.sfx('elf-hup', { vol: 0.6 }); }
-    else if (e.type === 'wake') { ST.onWake(); A.voice('noel-hello'); setTicker('Hello, Pip. I\'ve counted the reindeer. There are nine. You may want to check Comet.'); }
+    else if (e.type === 'wake') { ST.onWake(); A.voice('noel-hello'); setTicker('Hello, Pip. I\'ve counted the reindeer: nine, as always. Now I\'ll think about toys. Spend my Insight in the NOEL tab.'); }
   }
   // Act 4 warning: the final job's banner with a lock on
   if (G.act === 4 && S.rank === 10 && S.locks.length && !G.seen.warn4) { G.seen.warn4 = true; setTicker('Leave the button with me, Pip. Just until the end.'); A.sfx('lock', { vol: 0.5 }); $('#btnDeclare').classList.add('clank'); setTimeout(() => $('#btnDeclare').classList.remove('clank'), 600); }
