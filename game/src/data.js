@@ -89,7 +89,7 @@ export const ACT_TEXT = {
       'Chief Toy Officer! Build the last toy before the sleigh leaves!'],
     lineUnplugged5: 'That old box on the shelf hums at night. Odd.',
     speaker: (r) => 'santa',
-    jobs: ['Wooden Tractor', 'Yo-yo', 'Puzzle Cube', 'Wooden Sword', 'Doodle Dial', 'Fidget Spinner', 'Chess', 'Pixel Play', 'Bike', 'Smartphone'],
+    jobs: ['Wooden Tractor', 'Yo-yo', 'Puzzle Cube', 'Wooden Sword', 'Doodle Dial', 'Wooden Train Set', 'Remote Control Car', 'Pixel Play', 'Bike', 'Smartphone'],
     tools: ['Cheap Hammer', 'Heavy Hammer', 'Supreme Hammer', 'Thunder Mallet'],
     help: { elf: ['Elf', 'A helper elf at the bench'], toyMachine: ['Toy Machine', 'A clockwork gingerbread contraption'], reindeer: ['Reindeer Team', 'Two reindeer working a big toy press'], assemblyLine: ['Assembly Line', 'A conveyor with a little NOEL eye on every arm'] },
     upg: { elfHammers: ['Elf Hammers', 'Elves ×2'], wakeNoel: ['Plug In NOEL', 'Wakes the old machine: it earns Insight'], hotCocoa: ['Hot Cocoa', 'Hammer hits ×1.5'], steelElfHammers: ['Steel Elf Hammers', 'Elves ×2'],

@@ -50,3 +50,10 @@ ending-1…6, nanogen pro 2K 4:3 with the Endings table's references, 1600×1200
 Act 1 now uses Chief Toy Officer's swing frames, hammers and step stool (already paid for there, $0). Act 2's clerk swing remade from those frames: 4 frames, 6 imagegen2 edits (medium, `--complexity low`), about **$0.45**.
 
 Running total: about $17.75 (this change: $0.45 of its $20).
+
+## Fixes #6 and #7 (2026-11-26)
+
+toy-03 Puzzle Cube (3×3 on every face), toy-06 Wooden Train Set, toy-07 Remote Control Car: imagegen2 high 1024², transparent (native alpha), refs toy-01 + toy-02, one take each, trimmed to the toys' 384² frame with their feet on row 361. About **$0.21**.
+
+Running total: about $17.96 (this change: $0.21 of its $20).
+
