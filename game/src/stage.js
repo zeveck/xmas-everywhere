@@ -135,6 +135,9 @@ const POSE = {
   1: { foot: 86.2, stool: [23.6, 17, 98.5], toyFoot: 68.5, toyW: 14, toyRange: [46, 62], kind: 'hammer', len: 0.35 },
   2: { foot: 81.6, stool: [23.6, 17, 93.8], toyFoot: 69, toyW: 11.5, toyRange: [42, 60], kind: 'stamp', len: 0.25 },
 };
+// Act 1's toys at their size in the world: a yo-yo is small, a bike is big (the pictures all fill the same square)
+const TOY_SCALE = [1, 0.55, 0.6, 0.85, 0.75, 1.05, 0.9, 0.62, 1.1, 0.55];
+const toyScale = (act, j) => (act === 1 ? TOY_SCALE[j] ?? 1 : 1);
 const SWING = [[0, 1], [45, 2], [125, 3], [190, -1]]; // ms -> frame
 function pivotsOf(set) { const d = data(`sprites/${set}/pivots`); if (!d || !d.frames) return null;
   return d.frames.map((f) => ({ fist: f.pivot || (f.fist && f.fist.length === 2 ? f.fist : null), crop: f.fistCrop || (f.fist && f.fist.length === 4 ? f.fist : null), angle: f.angle || 0 })); }
@@ -149,7 +152,7 @@ function poseLayout(act, S) {
   if (poseCache && poseCache.key === key) return poseCache;
   const set = act === 1 ? 'pip-swing' : 'pip-clerk-swing'; const pv = pivotsOf(set); const w = px(40), x = px(12), y = py(P.foot) - w * (507 / 512); const k = w / 512; // foot = the lowest opaque pixel (row 507)
   const pipH = w * 0.986, len = P.len * pipH; const spec = toolSpec(act, tool);
-  const jim = img(jobFile(act, S.job)); const jw = px(P.toyW), jh = jim ? jw * jim.height / jim.width : jw; const top = py(P.toyFoot) - jh * 0.92;
+  const jim = img(jobFile(act, S.job)); const jw = px(P.toyW) * toyScale(act, S.job), jh = jim ? jw * jim.height / jim.width : jw; const top = py(P.toyFoot) - jh * 0.92;
   let cx = px((P.toyRange[0] + P.toyRange[1]) / 2), strike = act === 1 ? 85 : 0;
   const f2 = pv && pv[2] && pv[2].fist;
   if (f2) {
@@ -209,7 +212,7 @@ const PILE = (() => { const x0 = 66, x1 = 100, y1 = 99; const rows = [[12, 0], [
 function pileImg(entry, i) { return entry >= 100 ? img('act1/presents-' + (1 + (i % 6))) : img(jobFile(1, entry)); }
 function drawPile(c, S, shown) { const list = S.pileToys && S.pileToys.length ? S.pileToys : null;
   for (let i = shown - 1; i >= 0; i--) { const sl = PILE[i]; const e = list ? list[i % list.length] : 100; const im = pileImg(e, i); if (!im) continue;
-    const w = px(sl.size), h = w * im.height / im.width; c.drawImage(im, px(sl.cx) - w / 2, py(sl.foot) - h, w, h); } }
+    const w = px(sl.size) * (e >= 100 ? 1 : 0.55 + 0.45 * toyScale(1, e % 100)), h = w * im.height / im.width; c.drawImage(im, px(sl.cx) - w / 2, py(sl.foot) - h, w, h); } }
 function drawWorkshop(c, S, o) {
   cover(c, img('act1/workshop-bg'));
   if (fx.dim) { c.fillStyle = `rgba(5,5,20,${0.55 * fx.dim})`; c.fillRect(0, 0, W, H); }
@@ -434,7 +437,7 @@ function drawFx(c, act, dt) {
   // a finished job: a present arcs to the pile (Act 1), a pop elsewhere
   for (const p of fx.presents) p.t += dt; fx.presents = fx.presents.filter((p) => p.t < 0.7);
   for (const p of fx.presents) { const k = p.t / 0.7;
-    if (act === 1) { const im = p.item != null ? pileImg(p.item, p.n) : img('act1/presents-1'); const x0 = poseCache ? poseCache.cx : px(52); const x = x0 + (px(84) - x0) * k, y = py(56) - Math.sin(k * Math.PI) * 120 + (py(88) - py(56)) * k; if (im) { const w = 40, h = w * im.height / im.width; c.drawImage(im, x - w / 2, y - h / 2, w, h); } }
+    if (act === 1) { const im = p.item != null ? pileImg(p.item, p.n) : img('act1/presents-1'); const x0 = poseCache ? poseCache.cx : px(52); const x = x0 + (px(84) - x0) * k, y = py(56) - Math.sin(k * Math.PI) * 120 + (py(88) - py(56)) * k; if (im) { const w = 40 * (p.item != null && p.item < 100 ? 0.55 + 0.45 * toyScale(1, p.item) : 1), h = w * im.height / im.width; c.drawImage(im, x - w / 2, y - h / 2, w, h); } }
     else { c.save(); c.globalAlpha = 1 - k; c.strokeStyle = act === 4 ? '#7affc0' : '#ffe08a'; c.lineWidth = 5; const [x, y] = act === 2 ? [px(52), py(60)] : act === 3 ? [globeGeom().cx, globeGeom().cy] : [viewport().cx, viewport().cy]; c.beginPath(); c.arc(x, y, 20 + k * 80, 0, Math.PI * 2); c.stroke(); c.restore(); }
     if (p.n > 1 && p.t < 0.6) { c.save(); c.font = '900 26px Nunito'; c.textAlign = 'center'; c.fillStyle = '#ffe27a'; c.strokeStyle = '#3a2415'; c.lineWidth = 4; const t = '×' + fmtShort(p.n); const y = (act <= 2 ? py(46) : py(20)) - p.t * 40; c.strokeText(t, px(52), y); c.fillText(t, px(52), y); c.restore(); }
   }
