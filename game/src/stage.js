@@ -204,7 +204,7 @@ function treeLights(c, S, allOn) {
 }
 // one present per toy for the first dozen, so the first toys you make are all there; then the pile grows more slowly,
 // filling its 40 places at about 1,200 toys
-function pileCount(n) { n = Math.floor(n); if (n <= 12) return Math.max(0, n); return Math.min(40, 12 + Math.floor(28 * Math.log(n / 12) / Math.log(100))); }
+export function pileCount(n) { n = Math.floor(n); if (n <= 12) return Math.max(0, n); return Math.min(40, 12 + Math.floor(28 * Math.log(n / 12) / Math.log(100))); }
 const PILE = (() => { const x0 = 66, x1 = 100, y1 = 99; const rows = [[12, 0], [10, 1], [8, 2], [6, 3], [4, 4]]; const slots = []; let k = 0;
   for (const [n, r] of rows) { const rowW = (x1 - x0) * (1 - r * 0.13), left = x0 + ((x1 - x0) - rowW) / 2 + 1;
     for (let i = 0; i < n; i++) { const j = ((k * 37) % 7) / 7 - 0.5; slots.push({ cx: left + (rowW - 2) * ((i + 0.5) / n) + j * 0.8, foot: y1 - 0.5 - r * 3.6 + Math.abs(j) * 0.6, size: 5.2 - r * 0.35 + (((k * 53) % 5) / 5) * 1.6, r, i, n }); k++; } }

@@ -128,8 +128,8 @@ target time; the script shows ±3%.
 | 3 | Assistant Toy Maker | 90 | Puzzle Cube, Heavy Hammer, Hot Cocoa | 2:00 |
 | 4 | Pretty Good Toy Maker | 550 | Wooden Sword, the first shooting stars | 4:00 |
 | 5 | Crafty Toy Maker | 2,200 | Doodle Dial, Toy Machine, Steel Elf Hammers | 6:30 |
-| 6 | Master Toy Maker | 8,000 | Fidget Spinner, Supreme Hammer, Wrapping Station | 9:30 |
-| 7 | Senior Master Toy Maker | 28,000 | Chess, Reindeer Team, Conveyor Belt | 13:00 |
+| 6 | Master Toy Maker | 8,000 | Wooden Train Set, Supreme Hammer, Wrapping Station | 9:30 |
+| 7 | Senior Master Toy Maker | 28,000 | Remote Control Car, Reindeer Team, Conveyor Belt | 13:00 |
 | 8 | Principal Toy Maker | 130,000 | Pixel Play, Thunder Mallet | 17:00 |
 | 9 | Assistant Toy Officer | 470,000 | Bike, Golden Elf Hammers | 21:00 |
 | 10 | Chief Toy Officer | 1,100,000 | Smartphone; the first Smartphone finished starts Christmas Eve | 26:00 |
@@ -155,8 +155,8 @@ steadily:
 | 3 | Puzzle Cube | 60 | 16 | 8 |
 | 4 | Wooden Sword | 150 | 45 | 22 |
 | 5 | Doodle Dial | 400 | 130 | 65 |
-| 6 | Fidget Spinner | 1,000 | 350 | 180 |
-| 7 | Chess | 2,500 | 950 | 500 |
+| 6 | Wooden Train Set | 1,000 | 350 | 180 |
+| 7 | Remote Control Car | 2,500 | 950 | 500 |
 | 8 | Pixel Play | 6,000 | 2,600 | 1,400 |
 | 9 | Bike | 15,000 | 7,000 | 3,800 |
 | 10 | Smartphone | 150,000 | 75,000 | 41,250 |
@@ -359,9 +359,11 @@ Must-haves:
   shows one pop with "×75", one present arc and one set of sounds; no
   hammer spin. At most 3 presents are in the air at once.
 - **The pile:** at most 40 presents are drawn, in fixed slots under the
-  tree. Slot n (1–40) fills when the pile reaches 2^(n/4) presents, so it
-  grows fast at first and is nearly full (about 39 slots, ~990 presents)
-  at Chief Toy Officer. Past 40 slots a "×N" tag shows the count. After
+  tree. One present per toy for the first 12 toys, so every early toy is
+  there; then slower (12 + 28·log(n/12)/log(100) slots), full at about
+  1,200 toys. The pile keeps exactly the toys it shows, newest replacing
+  older ones (issue #4). Toys are drawn at their own size: a yo-yo is
+  small, a bike big (issue #5). Past 40 slots a "×N" tag shows the count. After
   Christmas Eve the pile starts again from empty.
 - Purchases: the card flashes, plus a coin-jar sound. New helpers walk (or
   roll, or trot) in from the left edge and take their place in the crew
@@ -560,7 +562,7 @@ Nice to have:
 | tree | Christmas tree (made): plain fir in a wooden tub, no lights, bare tip | imagegen2 (ref anchor) | 1024×1536 → 683×1024 WebP, plus hand-placed `tree-lights.json` | yes | lights drawn in code | must (made) |
 | tree-star | The tree-top star | imagegen2 (ref anchor + tree) | 1024×1024 → 256×256 WebP | yes | dim, then lit, in code | must |
 | presents | 6 wrapped presents, different colours and sizes, on one sheet, cut apart in code | imagegen2 (ref anchor) | 1024×1024 → 1024×1024 WebP | yes | | must |
-| toy-01…toy-10 | The 10 toys, one each: Wooden Tractor (made), Yo-yo, Puzzle Cube, Wooden Sword, Doodle Dial (made: cream screen in a green rim, brass crank, red stand), Fidget Spinner, Chess (king and knight), Pixel Play (made: cream-and-red handheld, green screen, brass d-pad), Bike, Smartphone (generic, no logos) | imagegen2 (ref anchor + toy-01) | 1024×1024 → 384×384 WebP each | yes | | must (toy-01, 05, 08 made) |
+| toy-01…toy-10 | The 10 toys, one each: Wooden Tractor (made), Yo-yo, Puzzle Cube (3×3 on every face, repainted for issue #6), Wooden Sword, Doodle Dial (made: cream screen in a green rim, brass crank, red stand), Wooden Train Set (red engine, two wagons, a bit of track; repainted for issue #7), Remote Control Car (red buggy and its remote; issue #7), Pixel Play (made: cream-and-red handheld, green screen, brass d-pad), Bike, Smartphone (generic, no logos) | imagegen2 (ref anchor + toy-01) | 1024×1024 → 384×384 WebP each | yes | | must (toy-01, 05, 08 made) |
 | hammer-1…hammer-4 | Cheap Hammer, Heavy Hammer, Supreme Hammer (brass and red), Thunder Mallet (a stormy blue-silver mallet with a crackle of lightning, original design); drawn straight, handle down, for rotating in Pip's hand; grip point noted per hammer | imagegen2 (ref anchor) | 1024×1024 → 256×256 WebP each (shop) and 512×512 WebP (in hand) | yes | rotated in code | must |
 | elf-helper | A helper elf (different from Pip: a red tunic) at work, three-quarter, facing right | imagegen2 (ref anchor) | 1024×1024 → 256×256 WebP | yes | bobbing in code | must |
 | toy-machine | Clockwork gingerbread toy machine, three-quarter, facing right | imagegen2 (ref anchor) | 1024×1024 → 256×256 WebP | yes | wobble in code | must |

@@ -228,11 +228,13 @@ function handleEvents() {
   if (G.act === 4 && S.rank === 10 && S.locks.length && !G.seen.warn4) { G.seen.warn4 = true; setTicker('Leave the button with me, Pip. Just until the end.'); A.sfx('lock', { vol: 0.5 }); $('#btnDeclare').classList.add('clank'); setTimeout(() => $('#btnDeclare').classList.remove('clank'), 600); }
   refreshBanner();
 }
-// The pile under the tree keeps the toys you made (40 at most, newest replacing older ones); once the Wrapping
-// Station is in the line, every other toy arrives wrapped.
-function addToPile(S, job, n) { if (!S.pileToys) S.pileToys = []; let last = job;
+// The pile under the tree keeps the toys you made, as many as it shows (ST.pileCount: one per toy for the first dozen,
+// then slower, 40 at most), newest replacing older ones, so every toy that flies to the pile can be seen there; once the
+// Wrapping Station is in the line, every other toy arrives wrapped.
+function addToPile(S, job, n) { if (!S.pileToys) S.pileToys = []; let last = job; const cap = ST.pileCount(S.pile || 0);
+  if (S.pileToys.length > cap) S.pileToys = cap ? S.pileToys.slice(-cap) : []; // a save from before the pile matched its count
   for (let k = 0; k < Math.min(3, n); k++) { const wrapped = S.own.includes('wrappingStation') && (S.stats.made + k) % 2 === 0; last = wrapped ? 100 + job : job;
-    if (S.pileToys.length < 40) { S.pileToys.push(last); continue; }
+    if (S.pileToys.length < cap) { S.pileToys.push(last); continue; }
     // full: a new toy takes the place of one of the most common kind, so the pile keeps its variety
     const count = {}; for (const t of S.pileToys) { const j = t % 100; count[j] = (count[j] || 0) + 1; }
     const top = +Object.keys(count).sort((a, b) => count[b] - count[a])[0]; if (top === job && count[job] > 1 && Object.keys(count).length > 1 && (S.stats.made + k) % 3) continue;
