@@ -45,7 +45,7 @@ line (so one file is both the shop icon and the stage figure).
 | File | Size | What |
 |---|---|---|
 | workshop-bg, bench, tree, toy-01, toy-05, toy-08, hammer-1, hammer-1-hand | | (done, reused) |
-| toy-02 … toy-10 (02 Yo-yo, 03 Puzzle Cube, 04 Wooden Sword, 06 Fidget Spinner, 07 Chess king+knight, 09 Bike, 10 Smartphone: generic, blank screen, tiny green NOEL-eye camera) | 384² | toys, matching toy-01 |
+| toy-02 … toy-10 (02 Yo-yo, 03 Puzzle Cube, 04 Wooden Sword, 06 Wooden Train Set, 07 Remote Control Car (both repainted 2026-11-26 for issue #7; 03 repainted 3×3 for issue #6), 09 Bike, 10 Smartphone: generic, blank screen, tiny green NOEL-eye camera) | 384² | toys, matching toy-01 |
 | hammer-2 … hammer-4 (Heavy, Supreme brass-and-red, Thunder Mallet stormy blue-silver with a crackle) | 256² | shop icon; **drawn straight, handle down** |
 | hammer-2-hand … hammer-4-hand | 512² | the same pictures at 512, plus `hammers.json`: per hammer the grip point (x, y) in the 512 file (where the fist holds the handle) and the head's centre |
 | tree-star.webp | 256² | gold five-point tree-top star; tree-star-big.webp 1024² |

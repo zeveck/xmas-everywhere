@@ -138,6 +138,9 @@ const POSE = {
 // Act 1's toys at their size in the world: a yo-yo is small, a bike is big (the pictures all fill the same square)
 const TOY_SCALE = [1, 0.55, 0.6, 0.85, 0.75, 1.05, 0.9, 0.62, 1.1, 0.55];
 const toyScale = (act, j) => (act === 1 ? TOY_SCALE[j] ?? 1 : 1);
+// the first opaque row of each toy's 384 px picture, so the hammer comes down on the toy's real top (the train set is low)
+const TOY_TOP = [27, 23, 23, 23, 35, 120, 42, 32, 52, 23];
+const toyTopFrac = (act, j) => (act === 1 && TOY_TOP[j] != null ? 1 - TOY_TOP[j] / 384 : 0.92);
 const SWING = [[0, 1], [45, 2], [125, 3], [190, -1]]; // ms -> frame
 function pivotsOf(set) { const d = data(`sprites/${set}/pivots`); if (!d || !d.frames) return null;
   return d.frames.map((f) => ({ fist: f.pivot || (f.fist && f.fist.length === 2 ? f.fist : null), crop: f.fistCrop || (f.fist && f.fist.length === 4 ? f.fist : null), angle: f.angle || 0 })); }
