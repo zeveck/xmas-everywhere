@@ -31,6 +31,15 @@ Act 4, Xmas Everywhere: find life in the
 
 - `--change` (exactly as typed): `/gamegen --out xmas-everywhere --change reword the Declare Victory button's introduction and warnings, exactly as follows, then check those screens at every size and publish. --publish --no-confirm` (four numbered wordings: Act 2 title card "New:" line; Act 2 how-to card second paragraph; padlock-project warning with the gift-box icon; Lock card heading. How to play left as is.) Then: `After than, publish no-confirm.`
 
+- `--fix` (exactly as typed): `/gamegen:gamegen --fix all --publish --no-confirm --out xmas-everywhere`
+  - #4: Toys under tree (https://github.com/zeveck/xmas-everywhere/issues/4)
+  - #5: Yo-yo (https://github.com/zeveck/xmas-everywhere/issues/5)
+  - #6: Puzzle cube (https://github.com/zeveck/xmas-everywhere/issues/6)
+  - #7: Fidget Spinner + Chess (https://github.com/zeveck/xmas-everywhere/issues/7)
+  - #8: NOEL (https://github.com/zeveck/xmas-everywhere/issues/8)
+  - #9: Text wraps leaving a single word alone on its last line (https://github.com/zeveck/xmas-everywhere/issues/9)
+  - Typed mid-run: `If any seem more like you  should just explan something to me, feel tree to do that now.` (Explained #8's Comet joke; still reworded it.)
+
 ## Settings
 
 - Feedback: on (from `--feedback`). Saves: 3 (from `--saves`). Both added to the design in round 2's refine.
@@ -62,3 +71,14 @@ Act 4, Xmas Everywhere: find life in the
 - [x] Final review: playtester and bug hunter; 3 must-fix and 9 should-fix found, all fixed (design/REVIEW_LOG.md); the lock rule got a minimum step (sim 88/88).
 - [x] Polish pass: fresh reviewer at six sizes; 10 findings, all fixed (800×600 shop layout the big one).
 - [x] Wrap up: social card and GitHub preview from the game's art; README with screenshots and the requests; Pages workflow; published; whole game proven in one go (New Xmas to Silent Night, real input, 58:28 at 10 taps/s).
+
+## Fixes #4–#9 (2026-11-26)
+
+- [x] #4 pile: 1:1 for the first 12 toys, then log growth to 40 at ~1,200 (stage.js pileCount)
+- [x] #5 toy sizes: per-toy scale on the bench, in the pile and in the arc (stage.js TOY_SCALE)
+- [x] #6 Puzzle Cube repainted 3×3 (toy-03); #7 toy 6 Wooden Train Set, toy 7 Remote Control Car (toy-06, toy-07): 3 imagegen2 high images, ~$0.21
+- [x] #8 NOEL's wake line points at the NOEL tab instead of "check Comet"
+- [x] #9: full sweep (all 40 ranks: card, play screen, every shop tab; title, how-to, load, endings, pause, settings, credits) at 6 sizes found the Twice-Checker rows, the hands meter line, the rank bar and twin-card counts at 800×600, the job strip (cut names on phones; on 667×375 it pushed the shop off screen) and, on phones, long rank titles pushing gear/mute off screen (live too). All fixed; final sweep clean at all six sizes. Reviews: two fresh reviewers (fixes #4–#8; #9) — follow-ups fixed (pile contents, hammer aim on the train, NOEL hints, hyphen joiner, held counts).
+- [x] Act 1 replays 10/10 twice on the new code (Acts 2–4 unchanged in play: text/CSS only). Commits d40b754…, each Fixes #N.
+- [ ] Publish
+

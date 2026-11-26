@@ -94,6 +94,16 @@ Act 1 Chief Toy Officer's swing, step stool and toy pile, with a Wrapping Statio
 
 which added "This run" to the Endings screen.
 
+Then six more reports were fixed with:
+
+> /gamegen:gamegen --fix all --publish --no-confirm --out xmas-everywhere
+
+which made the pile under the tree match the toys you make (#4), drew each toy at its own size, so a
+yo-yo is small and a bike is big (#5), repainted the Puzzle Cube as a true 3×3 (#6), turned toys 6
+and 7 into a Wooden Train Set and a Remote Control Car (#7), gave NOEL a first line that points at
+something you can do (#8), and kept text from leaving one word alone on a line, or being cut off, on
+every screen at every size (#9).
+
 gamegen designed the game, had review agents polish the design, made the art, animation, music and
 sound with these plugins, built it, and play-tested it:
 
