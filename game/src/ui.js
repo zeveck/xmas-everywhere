@@ -3,6 +3,9 @@
 import { ACTS, ACT_TEXT, LOCKS_TEXT, INS_SCALE, THRESHOLDS } from './data.js';
 import * as R from './rules.js';
 import { url, helperFile, upgFile, jobFile, toolFile } from './assets.js';
+// no-break helpers for wrapping (issue #9): nb keeps a phrase whole, tie keeps its last two words together
+const nb = (t) => String(t).replace(/ /g, '\u00a0').replace(/-/g, '-\u2060');
+const tie = (t) => String(t).replace(/-/g, '-\u2060').replace(/ (\S+)$/, '\u00a0$1');
 
 export const $ = (s) => document.querySelector(s);
 export function fmt(n) {
@@ -108,7 +111,7 @@ export function update(S, extra = {}) {
   // jobs
   for (let i = 0; i < 10; i++) { const b = els.jobs[i]; const lockd = i >= S.rank; const st = lockd ? 'locked' : (i === S.job ? 'sel' : '');
     setIf('jc' + i, b, 'cls', 'item ' + st); const made = S.made[i]; setIf('jt' + i, b.querySelector('.tally'), 'text', made > 9999 ? fmt(made) : String(made).padStart(4, '0'));
-    setIf('jd' + i, b.querySelector('.it-desc'), 'text', lockd ? `Rank ${i + 1}: ${T.ranks[i]}` : `${fmt(A.JOBS[i][1] * RR.m.cookies)}\u00a0cookies, ${fmt(A.JOBS[i][2] * RR.m.prog * RR.m.nice)}\u00a0${T.progress}`);
+    setIf('jd' + i, b.querySelector('.it-desc'), 'text', lockd ? `Rank\u00a0${i + 1}: ${tie(T.ranks[i])}` : `${fmt(A.JOBS[i][1] * RR.m.cookies)}\u00a0cookies, ${fmt(A.JOBS[i][2] * RR.m.prog * RR.m.nice)}\u00a0${T.progress}`);
     if (!lockd) { const w = R.rates(S, { job: i }).work; setIf('jb' + i, b.querySelector('.mini-bar i'), 'width', Math.min(100, S.jp[i] / w * 100).toFixed(0) + '%'); } }
   // tools
   const owned = R.toolIdx(S);
@@ -120,7 +123,7 @@ export function update(S, extra = {}) {
   for (const [id, w, , r, kind] of A.HELP) { const b = els.helpers[id]; const p = R.price(S, id); const lockd = r > S.rank;
     setIf('hc' + id, b, 'cls', 'item ' + (act > 1 ? (kind === 'hand' ? 'hand-side ' : 'noel-side ') : '') + (lockd ? 'locked' : S.cookies >= p ? '' : 'cant') + (extra.glowHelper === id ? ' glowing' : ''));
     setIf('hk' + id, b.querySelector('.it-cost'), 'html', lockd ? `Rank ${r}` : costHTML(p));
-    const g = S.gripped[id]; setIf('hn' + id, b.querySelector('.it-count'), 'text', S.n[id] || g ? `${S.n[id] + g}${g ? ` (${g} held)` : ''}` : ''); }
+    const g = S.gripped[id]; setIf('hn' + id, b.querySelector('.it-count'), 'text', S.n[id] || g ? `${S.n[id] + g}${g ? ` ${nb(`(${g} held)`)}` : ''}` : ''); }
   if (els.meter) updateMeter(S, RR);
   // upgrades and NOEL
   for (const it of R.itemsOf(act)) { const b = els.items[it.id]; if (!b) continue; const own = S.own.includes(it.id); const lockd = it.r > S.rank;
@@ -140,10 +143,10 @@ function updateMeter(S, RR) {
   const tick = m.querySelector('.tick'); setIf('mth', tick, 'hidden', !(locked && S.T != null)); if (S.T != null) setIf('mtl', tick, 'left', (S.T * 100).toFixed(1) + '%');
   const filling = R.holdFilling(S); const ring = m.querySelector('.meter-ring'); setIf('mrh', ring, 'hidden', !locked); setIf('mrv', ring, '--hold', (S.holdT / 30).toFixed(3));
   let txt;
-  if (!locked) txt = `Hands ${Math.round(share * 100)}% · <span class="warm">free hands +15%</span>`;
-  else if (!S.ready || S.T == null) txt = `Hands ${Math.round(share * 100)}% · ${'NOEL is recalculating… (rank 4)'}`;
+  if (!locked) txt = `${nb('Hands ' + Math.round(share * 100) + '%')}\u00a0· <span class="warm">${nb('free hands +15%')}</span>`;
+  else if (!S.ready || S.T == null) txt = `${nb('Hands ' + Math.round(share * 100) + '%')}\u00a0· ${nb('NOEL is recalculating…')} ${nb('(rank 4)')}`;
   else { const od = Math.round(R.overdrive(S) * 100); const built = S.locks.some((l) => l.built);
-    txt = `Hands ${Math.floor(share * 100)}% · goal ${Math.round(S.T * 100)}%` + (od ? ` · <span class="od">Overdrive +${od}%</span>` : '') + (filling ? ' · NOEL is checking…' : built ? '' : ' · Build an override to start the check'); }
+    txt = `${nb('Hands ' + Math.floor(share * 100) + '%')}\u00a0· ${nb('goal ' + Math.round(S.T * 100) + '%')}` + (od ? `\u00a0· <span class="od">${nb('Overdrive +' + od + '%')}</span>` : '') + (filling ? '\u00a0· ' + nb('NOEL is checking…') : built ? '' : '\u00a0· Build an override to start ' + nb('the check')); }
   setIf('mt', m.querySelector('.ml-text'), 'html', txt); setIf('mcls', m, 'cls', 'meter' + (locked ? '' : ' warmglow'));
   // override / lever rows
   const key = S.locks.map((l) => l.kind + (l.built ? 'b' : '') + (l.cost ?? 'x')).join(',') + '|' + S.ready + '|' + (S.cookies >= Math.min(...S.locks.map((l) => l.cost ?? Infinity)));

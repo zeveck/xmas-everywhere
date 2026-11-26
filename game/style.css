@@ -92,7 +92,7 @@ p { text-wrap: pretty; }
 
 /* ---- the act screen ---- */
 #game { display: grid; background: var(--bg); padding: var(--sat) var(--sar) 0 var(--sal);
-  grid-template-columns: 1fr; grid-template-rows: auto auto 1fr auto; grid-template-areas: 'top' 'center' 'shop' 'tabs'; }
+  grid-template-columns: minmax(0, 1fr); grid-template-rows: auto auto 1fr auto; grid-template-areas: 'top' 'center' 'shop' 'tabs'; }
 #topbar { grid-area: top; background: linear-gradient(var(--wood2), var(--wood)); color: #fff6e6; border-bottom: 3px solid rgba(0,0,0,0.35); padding: 4px 8px; }
 .tb-row { display: flex; align-items: center; gap: 8px; min-width: 0; }
 .tb-row1 { min-height: 46px; }
@@ -119,7 +119,7 @@ p { text-wrap: pretty; }
 .stat { display: flex; align-items: center; gap: 4px; white-space: nowrap; }
 .stat img { width: 24px; height: 24px; }
 .stat.rate { font-size: 13px; opacity: 0.9; font-weight: 700; }
-.prog-wrap { flex: 1; min-width: 70px; position: relative; }
+.prog-wrap { flex: 1; min-width: 70px; position: relative; container-type: inline-size; }
 .prog-bar { height: 18px; border-radius: 9px; background: rgba(0,0,0,0.35); border: 2px solid rgba(255,240,210,0.6); overflow: hidden; }
 .prog-fill { height: 100%; width: 0; background: linear-gradient(90deg, #2f7d43, #d9b44a); transition: width 0.2s; }
 .prog-label { position: absolute; inset: 0; display: flex; justify-content: center; align-items: center; font-size: 11px; font-weight: 900; text-shadow: 0 1px 2px #000; white-space: nowrap; overflow: hidden; }
@@ -328,7 +328,7 @@ body.act4 .card .big-title { color: var(--gold); }
   #center { justify-content: center; background: #000; }
   #stageWrap { width: min(calc((100vh - 28px - var(--sat) - var(--sab)) * 4 / 3), calc(100vw - 280px - var(--sal) - var(--sar))); height: auto; }
   .tb-row1 { gap: 4px; }
-  #jobStrip { height: 28px; min-height: 28px; }
+  #jobStrip { min-height: 28px; }
   #topbar { padding: 2px 6px; }
   .tb-row1 { min-height: 44px; }
   .rank-title { font-size: 15px; white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
@@ -424,3 +424,20 @@ body.act4 .stats-card h3 { color: var(--gold); }
 body.act4 .st-noel { color: var(--noel); } body.act4 .st-hand { color: #ff9a8a; }
 .st-none { font-size: 13.5px; color: var(--ink2); margin: 0; }
 @media (max-width: 420px) { .st-row { grid-template-columns: repeat(2, 1fr); } }
+/* issue #9: no cut-off text in a narrow rank bar or twin card */
+@container (max-width: 200px) { .prog-label .rank-no { display: none; } }
+.twins .item .it-row { flex-wrap: wrap; row-gap: 0; }
+/* phones held upright: a long rank name ("Keeper of the Naughty and the Nice") wraps onto two balanced lines instead of
+   widening the top bar and pushing the settings and sound buttons off the screen */
+@media (orientation: portrait) and (max-width: 560px) { .rank-title { white-space: normal; text-wrap: balance; font-size: 18px; line-height: 1.12; padding-bottom: 2px; } }
+.twins .item .it-count { white-space: normal; text-align: right; }
+.meter-line .ml-text { text-wrap: pretty; }
+.toast { text-wrap: balance; }
+@container (max-width: 240px) { .prog-label .pl-word { display: none; } }
+/* the strip under the picture: long names ("The Ones Who Want Nothing") and counts wrap onto two balanced lines instead
+   of being cut off, or (on short landscape screens) of widening the picture's column and pushing the shop off screen */
+.job-name { white-space: normal; overflow: visible; text-overflow: clip; text-wrap: balance; line-height: 1.1; flex: 0 1 auto; }
+.counter { white-space: normal; text-wrap: balance; text-align: right; line-height: 1.1; min-width: 0; }
+#center { min-width: 0; }
+.work-bar { min-width: 64px; }
+.job-name { min-width: 0; }
