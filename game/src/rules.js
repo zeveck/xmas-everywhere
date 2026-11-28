@@ -68,10 +68,11 @@ export function rates(S, o = {}) {
   const legacy = S.legacyL * TIER[0][0] * (A.SCALE || 1) * S.rank;
   hand += legacy;
   let held = 0; for (const [id, w] of A.HELP) if (S.gripped[id]) held += S.gripped[id] * twinWork(S, id, m);
-  const crew = hand + noel, toolW = A.TOOLS[tool][0] * m.tool;
-  const tapOne = toolW + A.CREW_TAP * crew, auto = tapOne * m.auto;
+  // a tap = the tool's multiplier × (a bare tap + CREW_TAP × crew): each tool multiplies what the whole crew adds to a tap
+  const crew = hand + noel, toolX = A.TOOLS[tool][0] * m.tool, toolW = toolX * A.TAP;
+  const tapOne = toolX * (A.TAP + A.CREW_TAP * crew), auto = tapOne * m.auto;
   const j = o.job ?? S.job; const [w, c, p] = A.JOBS[j]; const work = w * m.work * (j === 9 ? m.work10 : 1);
-  return { m, crew, hand, noel, legacy, per, toolW, tapOne, auto, work, share: crew + held > 0 ? hand / (crew + held) : 1,
+  return { m, crew, hand, noel, legacy, per, toolW, toolX, tapOne, auto, work, share: crew + held > 0 ? hand / (crew + held) : 1,
     cpsPassive: (crew + auto) / work * c * m.cookies, cookiesPer: c * m.cookies, progPer: p * m.prog * m.nice };
 }
 // A gripped helper counts on NOEL's side at its NOEL twin's work.
@@ -98,10 +99,10 @@ function addWork(S, w, capped) {
   promote(S);
   return done;
 }
-// A tap: tool part + CREW_TAP × crew; Rush ×5 tool and ×2 crew; spot (Act 3 Cheer Spot) doubles it.
+// A tap: tool multiplier × (bare tap + CREW_TAP × crew); Rush ×5 the bare tap and ×2 the crew part; spot (Act 3 Cheer Spot) doubles it.
 export function tapValue(S, spot = false) {
   const A = ACTS[S.act]; const R = rates(S); const tm = S.rush > 0 ? 5 : 1, hm = S.rush > 0 ? 2 : 1;
-  return (R.toolW * tm + A.CREW_TAP * R.crew * hm) * (spot ? 2 : 1);
+  return R.toolX * (A.TAP * tm + A.CREW_TAP * R.crew * hm) * (spot ? 2 : 1);
 }
 export function tap(S, spot = false) {
   const v = tapValue(S, spot); S.stats.taps++; if (spot) S.stats.spot++;
@@ -233,9 +234,9 @@ export function step(S, dt) {
     if (!S.lucky && S.t >= S.nextLucky) { S.lucky = { t0: S.t, y: rnd(S) }; S.events.push({ type: 'lucky' }); }
     if (S.lucky && S.t - S.lucky.t0 > LUCKY_S) { S.lucky = null; S.nextLucky = S.t + 60 + rnd(S) * 60; }
   }
-  const R = rates(S); const hm = S.rush > 0 ? 2 : 1;
+  const R = rates(S); const hm = S.rush > 0 ? 2 : 1, tm = S.rush > 0 ? 5 : 1; // both before the countdown, as in the sim
   if (S.rush > 0) { S.rush -= dt; if (S.rush <= 0) { S.rush = 0; S.events.push({ type: 'rushEnd' }); } }
-  const auto = (R.toolW * (S.rush > 0 ? 5 : 1) + A.CREW_TAP * R.crew * hm) * R.m.auto * dt;
+  const auto = R.toolX * (A.TAP * tm + A.CREW_TAP * R.crew * hm) * R.m.auto * dt;
   const crew = R.crew * hm * dt;
   addWork(S, crew + auto, true);
   lockTimers(S, dt);

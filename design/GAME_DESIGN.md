@@ -107,8 +107,11 @@ asks whether your NOEL gave you a button.
   button back by building an override NOEL can't reach and putting enough hands on the wheel.
 
 **The mechanic the game lives or dies by** is the tap, as in Chief Toy Officer: instant sound, a
-swing or burst, a squash, sparks and a floating "+N". Each tap also adds 15% of the crew's work
-per second, so taps stay at least 25% of the work in Act 1 and 20% in Acts 2–4 (checked; actual
+swing or burst, a squash, sparks and a floating "+N". A tap is a bare tap plus 15% of the crew's work
+per second, **all multiplied by the tool**: ×1 to start, then ×1.5, ×2 and ×3 (changed 2026-11-28: tools
+used to add a flat amount, which shrank to 1–3% of a tap by rank 10, so hiring helpers always beat a
+new tool; now each tool multiplies what the whole crew adds, and skipping the tools makes an act 54–68%
+slower, a sim check). NOEL's auto-taps are taps, so they grow with the tool too. Taps stay at least 25% of the work in Act 1 and 20% in Acts 2–4 (checked; actual
 shares in BALANCE.md). **The second mechanic** is the button: always in view, always tempting,
 and NOEL quietly working against it.
 
@@ -180,7 +183,7 @@ stage and its own choice:
 |---|---|
 | Ranks | 10, with titles. Reaching rank *r* unlocks job *r* and selects it. Progress to reach each rank is tuned by the sim (BALANCE.md). |
 | Jobs | 10. Each has work, cookies and progress; each keeps its own progress, work carries over, and many can finish in one update. |
-| Tools | 4. The tool's work per tap; the best one is equipped automatically. |
+| Tools | 4. Each multiplies the whole tap (×1, ×1.5, ×2, ×3); the best one is equipped automatically. |
 | Helpers | Work per second on the selected job; each costs 15% more than the last you bought. Act 1 has 4 kinds. Acts 2–4 have **4 tiers, each in a hand-run and a NOEL-run version** with the same work per second; NOEL's costs 40% less. |
 | Upgrades | Bought once with cookies. From Act 2 they mostly boost hand-run helpers: cookies buy hands. |
 | NOEL projects | Bought once with **Insight**, a fixed share of every progress point once NOEL is on, spent within the act ("NOEL is learning something new" resets it to 0 each act). Projects mostly boost NOEL and NOEL-run helpers: Insight buys machines. **Flagged** ones carry a red ribbon, "NOEL wants this": they're the strongest. Five carry a **padlock** on the ribbon and the line **"Buying this lets NOEL lock your Merry Xmas button"**, with the gift-box icon (`shared/icon-declare`) drawn small before it. |
@@ -253,7 +256,7 @@ Chief Toy Officer, with NOEL and one more factory buildout.
   on the same stool and brings his stamp straight down onto the file.
 - **Tap:** hammer the toy. **Ranks, toys, hammers and upgrades:** Chief Toy Officer's, word for
   word (ranks Assistant Junior Toy Maker … Chief Toy Officer; toys Wooden Tractor … Smartphone;
-  hammers Cheap, Heavy 150 at rank 3, Supreme 6,000 at rank 6, Thunder Mallet 40,000 at rank 8;
+  hammers Cheap, Heavy 150 at rank 3 (×1.5 every tap), Supreme 6,000 at rank 6 (×2), Thunder Mallet 40,000 at rank 8 (×3);
   upgrades Elf Hammers 200, Hot Cocoa 500, Steel Elf Hammers 3,000, Wrapping Station 6,000,
   Conveyor Belt 30,000, Golden Elf Hammers 60,000), plus **Plug In NOEL** (60 cookies, rank 3).
   Cheer to reach each rank is retuned for NOEL (BALANCE.md).
@@ -460,7 +463,7 @@ has never had an Xmas."*
   the species' portrait, name, what it wants, and two buttons:
   - **Listen** (mitten): cookies +6% for the rest of the act (stacking; "They shared what they
     make."). The card flips to **their** answer.
-  - **Translate** (eye): Wonder +4.5% for the rest of the act (stacking), a little faster. The
+  - **Translate** (eye): Wonder +4% for the rest of the act (stacking), a little faster. The
     card flips to **NOEL's** line.
   - Then **Continue**; the answer also prints on the NOEL ticker. The rank-10 promotion is a
     plain NOEL card: "The stars are almost in position, Pip." (The Universe Itself doesn't
@@ -525,12 +528,12 @@ The three later acts share one shape; their names differ. Costs and work are in 
 | 9 | "NOEL says it has a design for the very last toy. Ho... ho." | Acting Santa. (NOEL) "Everyone online is nice now. I checked." | Santa of All Earth. "The Moon has agreed to wear a hat." | Universal Claus |
 | 10 | "Chief Toy Officer! Build the last toy before the sleigh leaves!" | Santa-in-Waiting. (NOEL) "One file is left, Pip. Check it twice." | Earthmas Santa. "Only one thing on Earth isn't celebrating yet. Earth." | The Claus. (NOEL) "The stars are almost in position, Pip." |
 
-| Tool | Act 2 (stamps) | Act 3 (bells) | Act 4 (scanners) | Work per tap | Cost | Rank |
+| Tool | Act 2 (stamps) | Act 3 (bells) | Act 4 (scanners) | Tap multiplier | Cost | Rank |
 |---|---|---|---|---|---|---|
-| 1 | Rubber Stamp | Hand Bell | Brass Telescope | 1 | free | 1 |
-| 2 | Double Stamp | Sleigh Bells | Radio Dish | 5 | 250 | 3 |
-| 3 | Rolling Stamp | Bell Tower | Wish Beacon | 25 | 8,000 | 6 |
-| 4 | the Great Seal | Planetary Carillon | Star Lens | 120 | 60,000 | 8 |
+| 1 | Rubber Stamp | Hand Bell | Brass Telescope | ×1 | free | 1 |
+| 2 | Double Stamp | Sleigh Bells | Radio Dish | ×1.5 | 250 | 3 |
+| 3 | Rolling Stamp | Bell Tower | Wish Beacon | ×2 | 8,000 | 6 |
+| 4 | the Great Seal | Planetary Carillon | Star Lens | ×3 | 60,000 | 8 |
 
 | Tier | Act 2: hand-run / NOEL-run | Act 3 | Act 4 | Work/s | First cost (hand / NOEL) | Rank (hand / NOEL) |
 |---|---|---|---|---|---|---|
@@ -1004,8 +1007,9 @@ extended like this:
 - **Balance script:** `tools/balance-draft.mjs` (to become `tools/balance.mjs`, importing
   `acts/*.js` and `rules.js`) runs the acts in a chain and writes `design/BALANCE.md`. Each act
   must pass: the reference in 24–30 minutes with every rank within ±25%; no wait over 90 s; taps
-  at least 25% (Act 1) or 20% of work; the slow player under 45 minutes and the no-flag player
-  under 40; every lock at most 5 minutes of income to clear whenever its target is set, for
+  at least 25% (Act 1) or 20% of work; **skipping the tools at least 12% slower**; the slow player
+  under 45 minutes and the no-flag player under 40; never plugging NOEL in under 50 minutes (45
+  before tools multiplied NOEL's taps too); every lock at most 5 minutes of income to clear whenever its target is set, for
   every simulated player; the reference clear of locks at the act's end; **ignoring this act's
   locks 30–150 s faster, NOEL's answers 60–150 s faster**; with carried locks, ignoring slower
   in Acts 3 and 4 and at least 3 minutes slower over the game; **the late-clear check** (a

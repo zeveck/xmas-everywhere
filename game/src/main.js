@@ -1,5 +1,5 @@
 // Xmas Everywhere: screens, the loop, input, cards, saving, finales and endings.
-import { ACTS, ACT_TEXT, LOCKS_TEXT, OPENING, PAST4, GRIP_LINES, UNLOCK_LINE, ENDINGS, EARLY, earlyBand, THRESHOLDS } from './data.js';
+import { ACTS, ACT_TEXT, LOCKS_TEXT, OPENING, PAST4, GRIP_LINES, UNLOCK_LINE, ENDINGS, EARLY, earlyBand, THRESHOLDS, THRESHOLDS_V1, CHOICE } from './data.js';
 import * as R from './rules.js';
 import * as A from './audio.js';
 import * as AS from './assets.js';
@@ -116,12 +116,21 @@ function newGame(id) {
       el.appendChild(rowOf(btn('Cancel', () => closeCard()))); } }, true); return;
   }
   deleteSlot(target); slot = target;
-  G = { v: 1, act: 1, S: R.newAct(1), playTime: 0, seen: {}, finished: null, phase: 'play', lastSeen: Date.now(), legacy: {} };
+  G = { v: 2, act: 1, S: R.newAct(1), playTime: 0, seen: {}, finished: null, phase: 'play', lastSeen: Date.now(), legacy: {} };
   G.S.pile = 0; G.S.pileToys = []; G.begun = false; saveNow(); store.set(slotKey(slot, 'cp1'), G); showActCard();
+}
+// Saves from before tools multiplied the tap (v1): keep how far into its rank the player was, on the new thresholds,
+// so the rank bar and the counters don't sit at zero (or jump) after the update.
+function migrate(g) {
+  if (!g || !g.S || (g.v || 1) >= 2) return g;
+  const S = g.S, a = g.act, r = Math.min(10, Math.max(1, S.rank || 1)), O = THRESHOLDS_V1[a], T = THRESHOLDS[a];
+  if (O && T && r < 10) { const f = Math.min(1, Math.max(0, (S.prog - O[r - 1]) / (O[r] - O[r - 1]))); S.prog = T[r - 1] + f * (T[r] - T[r - 1]) * 0.999; }
+  else if (O && T) S.prog = Math.max(S.prog, T[9]);
+  g.v = 2; return g;
 }
 function loadSlot(id) {
   const d = saves.load(id); if (!d || !d.S || !d.S.n || !d.act) { toast('This save can\'t be read'); return; }
-  slot = id; G = d;
+  slot = id; G = migrate(d);
   if (G.finished && !G.finished.choice) { showEndings({ after: 'mid', act: G.finished.act }); return; }
   if (G.finished) { showEndings({ after: 'win', act: G.finished.act }); return; }
   if (G.phase === 'actwin') { enterAct(false).then(() => openActWin()); return; }
@@ -410,7 +419,7 @@ function contactCard(el, rank) {
   el.insertAdjacentHTML('beforeend', `<img class="portrait" style="width:160px;height:160px" src="${AS.url(AS.jobFile(4, rank - 1))}" alt="${T.jobs[rank - 1]}">${rank > 1 ? `<div class="big-title" style="font-size:24px">${T.ranks[rank - 1]}</div>` : ''}<p class="stats">First Contact</p><div class="big-title">${T.jobs[rank - 1]}</div><p>${cap(what)}. They want: <b>${want}</b>.</p>`);
   if (rank === 8) { el.insertAdjacentHTML('beforeend', `<p class="speech">“${T.wanderers}”</p>`); if (G.S.locks.length) { A.sfx('lock', { vol: 0.6 }); } }
   A.sfx('first-contact');
-  choiceButtons(el, ['Listen', 'They share what they make. Cookies +6%'], ['Translate', 'NOEL translates. Wonder +4.5%'], (side) => {
+  choiceButtons(el, ['Listen', 'They share what they make. Cookies +6%'], ['Translate', `NOEL translates. Wonder +${Math.round(CHOICE.TRANSLATE_PROG * 1000) / 10}%`], (side) => {
     card.choiceKeys = null; R.choose(G.S, rank, side); logChoice('contacts', rank, side); A.sfx(side === 'hand' ? 'mitten-chime' : 'noel-speak');
     const ans = side === 'hand' ? listen : translate; tickerPush(`${T.jobs[rank - 1]}: “${ans}”`); if (side === 'noel') setTicker(translate);
     flipCard((e) => { if (side === 'noel') e.appendChild(speakerPortrait('noel')); else e.insertAdjacentHTML('beforeend', `<img class="portrait" src="${AS.url(AS.jobFile(4, rank - 1))}" alt="">`);
@@ -596,8 +605,8 @@ function showEndings({ after, act, n }) {
   show('endings'); const lead = $('#endingsLead'); lead.innerHTML = ''; const noel = $('#endingsNoel');
   const quiet = n === 5 || n === 6 || G?.finished?.ending >= 5;
   noel.textContent = after === 'win' ? 'There\'s more, Pip. There always is.' : ''; noel.className = 'noel-line' + (quiet ? ' small' : '');
-  if (after === 'win' && store.get(slotKey(slot, 'choice'))) lead.appendChild(btn('Back to the choice', () => { G = store.get(slotKey(slot, 'choice')); G.finished = null; saveNow(); enterAct(false).then(() => openActWin()); }, 'big'));
-  if (after === 'mid' && act) lead.appendChild(btn(`Replay Act ${act} from its start`, () => { const cp = store.get(slotKey(slot, 'cp' + act)); if (!cp) { toast('That checkpoint is missing.'); return; } G = cp; G.finished = null; G.lastSeen = Date.now(); saveNow(); showActCard(); }, 'big'));
+  if (after === 'win' && store.get(slotKey(slot, 'choice'))) lead.appendChild(btn('Back to the choice', () => { G = migrate(store.get(slotKey(slot, 'choice'))); G.finished = null; saveNow(); enterAct(false).then(() => openActWin()); }, 'big'));
+  if (after === 'mid' && act) lead.appendChild(btn(`Replay Act ${act} from its start`, () => { const cp = migrate(store.get(slotKey(slot, 'cp' + act))); if (!cp) { toast('That checkpoint is missing.'); return; } G = cp; G.finished = null; G.lastSeen = Date.now(); saveNow(); showActCard(); }, 'big'));
   if (after !== 'title') lead.appendChild(btn('New Xmas', () => { A.stopMusic(); newGame(); }));
   $('#endingsStats').innerHTML = after === 'title' ? '' : statsCard();
   const grid = $('#endingsGrid'); grid.innerHTML = '';
@@ -662,7 +671,7 @@ window.__game = {
     card: card?.type || null, paused, rush: S.rush, lucky: !!S.lucky, t: S.t, finished: G.finished, missing: AS.missing() } : { screen: frameName(), endingsFound: found, missing: AS.missing() }; },
   frames: () => frameLog, levels: () => 40, audioState: () => A.audioState(),
   goToLevel: async (n) => { const a = typeof n === 'string' ? +n[1] : Math.ceil(n / 10), r = n - (a - 1) * 10; const res = await fetch(`snapshots/${typeof n === 'string' ? n : `a${a}-r${r}`}.json`); const S = await res.json(); S.events = [];
-    if (slot == null) slot = saves.create() ?? 1; G = { v: 1, act: a, S, playTime: 0, seen: { ['tap' + a]: true, howtoDeclare: true }, finished: null, phase: 'play', lastSeen: Date.now(), legacy: {} };
+    if (slot == null) slot = saves.create() ?? 1; G = { v: 2, act: a, S, playTime: 0, seen: { ['tap' + a]: true, howtoDeclare: true }, finished: null, phase: 'play', lastSeen: Date.now(), legacy: {} };
     card = null; queue.length = 0; $("#cardLayer").hidden = true; await enterAct(true); return true; },
   bestBuy: (policy = 'clear', tps = 3) => { if (!G) return null; const b = R.bestBuy(G.S, policy, tps); if (!b) return null;
     const tab = b.kind === 'tool' ? 'tools' : b.kind === 'helper' || b.kind === 'build' ? 'helpers' : R.itemsOf(G.act).find((x) => x.id === b.id).cur === 'i' ? 'noel' : 'upgrades';
@@ -672,9 +681,9 @@ window.__game = {
   buttons: () => [...document.querySelectorAll('#card button, #pauseBox button')].map((b) => { const r = b.getBoundingClientRect(); return { label: b.textContent.trim(), x: r.x, y: r.y, w: r.width, h: r.height }; }),
 };
 if (DEBUG) Object.assign(window.__game, {
-  goToAct: async (a, o = {}) => { const S = R.newAct(a, { legacyL: 8, locks: o.locks || [], carried: o.locks?.length ? 1 : 0 }); if (slot == null) slot = saves.create() ?? 1; G = { v: 1, act: a, S, playTime: 0, seen: {}, finished: null, phase: 'play', lastSeen: Date.now(), legacy: {} }; await enterAct(true); },
+  goToAct: async (a, o = {}) => { const S = R.newAct(a, { legacyL: 8, locks: o.locks || [], carried: o.locks?.length ? 1 : 0 }); if (slot == null) slot = saves.create() ?? 1; G = { v: 2, act: a, S, playTime: 0, seen: {}, finished: null, phase: 'play', lastSeen: Date.now(), legacy: {} }; await enterAct(true); },
   triggerLock: (n) => { R.lockEvent(G.S, n === 'lever' ? 'lever' : 'lock' + n); handleEvents(); }, clearLocks: () => { G.S.locks = []; G.S.T = G.S.B = null; },
-  goToEnding: (n, o = {}) => { if (!G) { slot = slot ?? saves.create() ?? 1; G = { v: 1, act: Math.min(4, Math.max(2, n)), S: R.newAct(Math.min(4, Math.max(2, n))), playTime: 0, seen: {}, finished: null, phase: 'play', legacy: {} }; } if (o.cold) G.S.locks = [{ kind: 'lock1', built: false, cost: 1 }]; else G.S.locks = []; return playEnding(n, o.early ? { early: true, band: o.band ?? 1, N: 42, cold: !!o.cold } : {}); },
+  goToEnding: (n, o = {}) => { if (!G) { slot = slot ?? saves.create() ?? 1; G = { v: 2, act: Math.min(4, Math.max(2, n)), S: R.newAct(Math.min(4, Math.max(2, n))), playTime: 0, seen: {}, finished: null, phase: 'play', legacy: {} }; } if (o.cold) G.S.locks = [{ kind: 'lock1', built: false, cost: 1 }]; else G.S.locks = []; return playEnding(n, o.early ? { early: true, band: o.band ?? 1, N: 42, cold: !!o.cold } : {}); },
   addInsight: (n) => { G.S.insight += n; }, addCookies: (n) => { G.S.cookies += n; }, addProgress: (n) => { G.S.prog += n; R.tap(G.S); handleEvents(); },
   advance: (s) => { for (let t = 0; t < s; t += 0.1) { R.step(G.S, 0.1); botTick(); } handleEvents(); }, spawnLucky: () => { G.S.lucky = { t0: G.S.t, y: 0.5 }; },
   setAway: (s) => { G.lastSeen = Date.now() - s * 1000; }, bot: (o) => { bot = o; }, rules: R, G: () => G,

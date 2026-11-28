@@ -35,7 +35,9 @@ the wheel to win it back. Six endings are waiting, one of them a secret.
 
 - **Work:** click or tap the stage (or press Space or Enter). Every tap also adds a share of your
   crew's work.
-- **Spend:** cookies buy tools, helpers and upgrades; NOEL's Insight buys NOEL's projects.
+- **Spend:** cookies buy tools, helpers and upgrades; NOEL's Insight buys NOEL's projects. Each new
+  tool multiplies every tap (×1.5, ×2, ×3), and a tap carries a share of your whole crew's work, so
+  helpers and tools make each other stronger.
   From Act 2, pick hand-run helpers (the mitten) or NOEL's cheaper machines (the eye).
 - **Pick a job:** keys 1–9 and 0, or the shelf (the first tab on phones).
 - **Lucky things:** click the falling star, letter, cloud or comet for a Rush.
@@ -103,6 +105,17 @@ yo-yo is small and a bike is big (#5), repainted the Puzzle Cube as a true 3×3 
 and 7 into a Wooden Train Set and a Remote Control Car (#7), gave NOEL a first line that points at
 something you can do (#8), and kept text from leaving one word alone on a line, or being cut off, on
 every screen at every size (#9).
+
+Then, after a player report on Chief Toy Officer ("it seems to make more sense to just keep hiring
+elves than upgrade my hammer"), asked here in chat:
+
+> We should probably fix https://github.com/zeveck/xmas-clicker/issues/1 here too unless you object. Thoughts and best path?
+
+> It's not critical to match Xmas Clicker. which is the better play mechanic fix?
+
+The answer was to make every tool multiply the whole tap instead of adding a fixed amount, in all four
+acts: before, a new tool was worth 1–3% of a tap by rank 10 and skipping the tools cost only 3–8%; now
+skipping them makes an act 54–68% slower, while each act still takes about 26 minutes.
 
 gamegen designed the game, had review agents polish the design, made the art, animation, music and
 sound with these plugins, built it, and play-tested it:

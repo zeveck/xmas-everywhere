@@ -40,6 +40,8 @@ Act 4, Xmas Everywhere: find life in the
   - #9: Text wraps leaving a single word alone on its last line (https://github.com/zeveck/xmas-everywhere/issues/9)
   - Typed mid-run: `If any seem more like you  should just explan something to me, feel tree to do that now.` (Explained #8's Comet joke; still reworded it.)
 
+- Change (asked in chat, 2026-11-26/28): `We should probably fix https://github.com/zeveck/xmas-clicker/issues/1 here too unless you object. Thoughts and best path?` then `It's not critical to match Xmas Clicker. which is the better play mechanic fix?` then `yes` (to: tools multiply the whole tap instead of adding a flat amount, every act; re-tune, replay all 40, whole-game run, publish).
+
 ## Settings
 
 - Feedback: on (from `--feedback`). Saves: 3 (from `--saves`). Both added to the design in round 2's refine.
@@ -81,4 +83,12 @@ Act 4, Xmas Everywhere: find life in the
 - [x] #9: full sweep (all 40 ranks: card, play screen, every shop tab; title, how-to, load, endings, pause, settings, credits) at 6 sizes found the Twice-Checker rows, the hands meter line, the rank bar and twin-card counts at 800×600, the job strip (cut names on phones; on 667×375 it pushed the shop off screen) and, on phones, long rank titles pushing gear/mute off screen (live too). All fixed; final sweep clean at all six sizes. Reviews: two fresh reviewers (fixes #4–#8; #9) — follow-ups fixed (pile contents, hammer aim on the train, NOEL hints, hyphen joiner, held counts).
 - [x] Act 1 replays 10/10 twice on the new code (Acts 2–4 unchanged in play: text/CSS only). Commits d40b754…, each Fixes #N.
 - [x] Published 2026-11-26 (deploy OK; issues #4–#9 closed by the push); live check desktop 1280×800 and iPhone 15 (title, Act 1 rank 6 train set, Act 2 ranks 2 and 6), no errors, scanner clean; art page labels updated (gallery e5328e4).
+
+## Change: tools multiply the tap (2026-11-28)
+
+Why: a tap = tool + 15% of crew work/s, so the tool's share of a tap fell to 1–3% by rank 10 in every act; skipping tools cost only 3–8% (sim, 6 taps/s). xmas-clicker #1 ("keep hiring elves rather than upgrade my hammer") applies here.
+- [x] Rule in tools/balance-draft.mjs + game/src/rules.js: tap = tool multiplier × (TAP + CREW_TAP × crew). Tried ×2/4/8 (skipping tools 180–250% slower: too much), settled ×1.5/×2/×3, prices kept (54–68% slower without tools). 92/92 checks (new: skipping tools ≥12% slower; Translate +4% was 4.5%; no-NOEL guard 50 min, was 45). Thresholds re-tuned; verify-rules within 2% (Act 1 rank 2 −5% as before).
+- [x] Tool rows "Every tap ×1.5" / "The one you start with"; Translate text from CHOICE; v1 saves keep their place in the rank on the new thresholds (main.js migrate); Rush countdown order as in the sim; GAME_DESIGN, BALANCE (regenerated), README
+- [ ] Snapshots rebuilt (verify-rules --snap; --carried with ignore). Replays round 1: 40/40 PASS (.gamegen/elves/round1). Fresh review: 3 findings, all fixed. Round 2 + whole-game run: running
+- [ ] Publish
 

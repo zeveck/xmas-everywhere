@@ -5,23 +5,30 @@ const K = 1e3, M = 1e6, B = 1e9;
 export const TARGET = [0, 40, 120, 240, 390, 570, 780, 1020, 1260, 1560];
 export const LOCK = { OD_PER: 0.10, OD_MAX: 4, GRIP: 180, GRIP_CARRY: 60, GRIP_EXTRA: 15, GRIP_MIN: 30, HOLD: 30, ESC: 360,
   OVR_COST_S: 30, LEVER_COST_S: 30, REACH_S: 180, FREE_HAND: 0.15, BUMP: 0.10, MIN_STEP: 0.05, GRIP_MIN_SHARE: 0.1 };
-export const CHOICE = { GRANT_HAND: 0.03, SHAPE_NOEL: 0.06, LISTEN_COOKIES: 0.06, TRANSLATE_PROG: 0.045 };
+export const CHOICE = { GRANT_HAND: 0.03, SHAPE_NOEL: 0.06, LISTEN_COOKIES: 0.06, TRANSLATE_PROG: 0.04 };
 export const SPOT = { MOUSE: 1.5, KEYS: 1 + 4 / 5.5, REST: 4, GLIDE: 1.5 };
 export const INS_SCALE = { 1: 1, 2: 4, 3: 15, 4: 60 };
 export const THRESHOLDS = {
+  1: [0, 13, 94, 410, 2700, 20000, 140000, 1900000, 6500000, 25000000],
+  2: [0, 56000, 580000, 3300000, 26000000, 350000000, 4900000000, 16000000000, 86000000000, 260000000000],
+  3: [0, 570000000, 5200000000, 31000000000, 300000000000, 2100000000000, 20000000000000, 52000000000000, 270000000000000, 880000000000000],
+  4: [0, 930000000000, 8600000000000, 40000000000000, 290000000000000, 3200000000000000, 31000000000000000, 92000000000000000, 650000000000000000, 2000000000000000000],
+};
+// The rank thresholds before tools multiplied the tap (saves made then are v1; main.js maps their progress onto the new ones)
+export const THRESHOLDS_V1 = {
   1: [0, 13, 94, 440, 2500, 14000, 74000, 720000, 2300000, 7400000],
   2: [0, 66000, 660000, 3200000, 15000000, 150000000, 1700000000, 6200000000, 26000000000, 77000000000],
   3: [0, 570000000, 5200000000, 23000000000, 120000000000, 860000000000, 6500000000000, 19000000000000, 76000000000000, 240000000000000],
   4: [0, 930000000000, 8600000000000, 33000000000000, 160000000000000, 1400000000000000, 9900000000000000, 32000000000000000, 190000000000000000, 580000000000000000],
 };
 
-// JOBS: [work, cookies, progress]; TOOLS: [tapWork, cost, rank]; HELP: [id, wps, firstCost, rank, kind hand|noel, tier]
+// JOBS: [work, cookies, progress]; TAP: a bare tap's work; TOOLS: [tap multiplier, cost, rank] (a tool multiplies the whole tap); HELP: [id, wps, firstCost, rank, kind hand|noel, tier]
 // UPG/NOEL: [id, cost, rank, fx[], flagged?]  fx: ['help',id,x] ['helpAll',x] ['noelAll',x] ['helpHand',x] ['tool',x]
 //   ['cookies',x] ['prog',x] ['work',x] ['work10',x] ['auto',tps] ['nice',+d] ['wake']
 function scaleAct(a, s) {
   return { ...a,
     JOBS: a.JOBS.map(([w, c, p]) => [w * s, c * s, p * s]),
-    TOOLS: a.TOOLS.map(([w, c, r]) => [w * s, c * s, r]),
+    TAP: (a.TAP || 1) * s, TOOLS: a.TOOLS.map(([x, c, r]) => [x, c * s, r]),
     HELP: a.HELP.map(([id, w, c, r, k, t]) => [id, w * s, c * s, r, k, t]),
     UPG: a.UPG.map(([id, c, r, fx, f]) => [id, c * s, r, fx, f]),
     SCALE: s };
@@ -33,7 +40,7 @@ const CTO_JOBS = [[10, 2, 1], [25, 6, 3], [60, 16, 8], [150, 45, 22], [400, 130,
 export const ACTS = {
   1: { name: 'Help Santa', CREW_TAP: 0.15, FINAL_CAP: 0.9, TAP_MUL: 1, NICE0: 1, INS: 0.25, NOEL_START: false, SCALE: 1,
     JOBS: CTO_JOBS,
-    TOOLS: [[1, 0, 1], [4, 150, 3], [20, 6000, 6], [100, 40000, 8]],
+    TOOLS: [[1, 0, 1], [1.5, 150, 3], [2, 6000, 6], [3, 40000, 8]],
     HELP: [['elf', 1, 15, 1, 'hand', 0], ['toyMachine', 30, 1800, 5, 'noel', 1], ['reindeer', 150, 10000, 7, 'hand', 2], ['assemblyLine', 600, 60000, 9, 'noel', 3]],
     UPG: [['elfHammers', 200, 2, [['help', 'elf', 2]]], ['wakeNoel', 60, 3, [['wake']]], ['hotCocoa', 500, 3, [['tool', 1.5]]], ['steelElfHammers', 3000, 5, [['help', 'elf', 2]]],
       ['wrappingStation', 6000, 6, [['cookies', 1.25]]], ['conveyorBelt', 30000, 7, [['help', 'toyMachine', 2]]], ['goldenElfHammers', 60000, 9, [['help', 'elf', 2]]]],
@@ -43,7 +50,7 @@ export const ACTS = {
   },
   2: scaleAct({ name: 'Replace Santa', CREW_TAP: 0.15, FINAL_CAP: 0.9, TAP_MUL: 1, NICE0: 0.6, INS: 0.25 / K, NOEL_START: true,
     JOBS: CTO_JOBS.map(([w, c, p]) => [w, c, p * 2]),
-    TOOLS: [[1, 0, 1], [5, 250, 3], [25, 8000, 6], [120, 60000, 8]],
+    TOOLS: [[1, 0, 1], [1.5, 250, 3], [2, 8000, 6], [3, 60000, 8]],
     HELP: pairs(['listElves', 'windowWatchers', 'letterCarriers', 'elfFieldOffice'], ['snowGlobeCams', 'chimneySensors', 'sleighSats', 'listEngine']),
     UPG: [['readingGlasses', 200, 2, [['help', 'listElves', 2]]], ['cocoaThermos', 600, 3, [['tool', 1.5]]], ['niceRibbons', 2000, 4, [['nice', 0.15]]],
       ['pneumaticTubes', 4000, 5, [['help', 'windowWatchers', 2], ['help', 'letterCarriers', 2]]], ['wishBoard', 8000, 6, [['cookies', 1.25]]], ['secondChances', 20000, 7, [['nice', 0.15]]], ['nightShift', 50000, 9, [['helpHand', 2]]]],
@@ -53,7 +60,7 @@ export const ACTS = {
   }, K),
   3: scaleAct({ name: 'Merry Earthmas', CREW_TAP: 0.15, FINAL_CAP: 0.9, TAP_MUL: 1.5, NICE0: 1, INS: 0.25 / M, NOEL_START: true,
     JOBS: CTO_JOBS.map(([w, c, p]) => [w, c, p * 4]),
-    TOOLS: [[1, 0, 1], [5, 250, 3], [25, 8000, 6], [120, 60000, 8]],
+    TOOLS: [[1, 0, 1], [1.5, 250, 3], [2, 8000, 6], [3, 60000, 8]],
     HELP: pairs(['santaStations', 'elfChoirs', 'sleighDepots', 'reindeerAirlift'], ['giftDrones', 'cheerTowers', 'snowMachines', 'orbitalTinsel']),
     UPG: [['biggerSacks', 200, 2, [['help', 'santaStations', 2]]], ['warmMittens', 600, 3, [['tool', 1.5]]], ['singAlong', 3000, 4, [['help', 'elfChoirs', 2]]],
       ['carolBooks', 4000, 5, [['helpHand', 1.5]]], ['giftShops', 8000, 6, [['cookies', 1.25]]], ['twelveDaysOfOvertime', 50000, 9, [['helpHand', 2]]]],
@@ -63,7 +70,7 @@ export const ACTS = {
   }, M),
   4: scaleAct({ name: 'Xmas Everywhere', CREW_TAP: 0.15, FINAL_CAP: 0.9, TAP_MUL: 1, NICE0: 1, INS: 0.25 / B, NOEL_START: true,
     JOBS: CTO_JOBS.map(([w, c, p]) => [w, c, p * 8]),
-    TOOLS: [[1, 0, 1], [5, 250, 3], [25, 8000, 6], [120, 60000, 8]],
+    TOOLS: [[1, 0, 1], [1.5, 250, 3], [2, 8000, 6], [3, 60000, 8]],
     HELP: pairs(['crewedSleighs', 'elfColonies', 'starChoirs', 'pipsFleet'], ['sleighProbes', 'ornamentSats', 'starForges', 'wreathsOfLight']),
     UPG: [['warmerSuits', 200, 2, [['help', 'crewedSleighs', 2]]], ['starCocoa', 600, 3, [['tool', 1.5]]], ['colonyBakeries', 3000, 4, [['help', 'elfColonies', 2]]],
       ['lettersFromHome', 4000, 5, [['helpHand', 1.5]]], ['giftExchange', 8000, 6, [['cookies', 1.25]]], ['homeForTheHolidays', 50000, 9, [['helpHand', 2]]]],
@@ -72,6 +79,7 @@ export const ACTS = {
     LOCKS: { selfCopyingProbes: 4, starHarvesting: 5 }, CHOICE: 'contact',
   }, B),
 };
+for (const a of Object.values(ACTS)) a.TAP ??= 1; // a bare tap's work (Acts 2-4: scaled with the act)
 
 // ---------------------------------------------------------------- words
 const kebab = (s) => s.replace(/[A-Z]/g, (c) => '-' + c.toLowerCase());

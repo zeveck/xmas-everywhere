@@ -48,7 +48,7 @@ export function buildAct(a, S) {
     b.dataset.buy = 'job:' + i; b.addEventListener('click', () => H.pickJob(i, b)); els.sec.jobs.appendChild(b); els.jobs.push(b); }
   // tools
   els.tools = [];
-  for (let i = 0; i < 4; i++) { const [w, c, r] = A.TOOLS[i]; const b = mk('button', 'item', `<img src="${url(toolFile(a, i))}" alt=""><div class="it-main"><div class="it-name">${T.tools[i]}</div><div class="it-desc"><span class="nw">+${fmt(w)} work</span> per tap</div></div><div class="it-side"><div class="it-cost"></div></div>`);
+  for (let i = 0; i < 4; i++) { const [w, c, r] = A.TOOLS[i]; const b = mk('button', 'item', `<img src="${url(toolFile(a, i))}" alt=""><div class="it-main"><div class="it-name">${T.tools[i]}</div><div class="it-desc">${i ? `<span class="nw">Every tap ×${w}</span>` : 'The one you start with'}</div></div><div class="it-side"><div class="it-cost"></div></div>`);
     b.dataset.buy = 'tool:' + i; b.addEventListener('click', () => H.buy('tool', i, b)); els.sec.tools.appendChild(b); els.tools.push(b); }
   // helpers
   els.helpers = {}; els.meter = null;

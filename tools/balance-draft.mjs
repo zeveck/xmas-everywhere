@@ -5,7 +5,8 @@
 //   node tools/balance-draft.mjs act 2      -> one act, verbose (no files written)
 //   BUYS=1                                   -> also print the reference run's purchases
 // Time is ACTIVE ECONOMY TIME: the act screen is up, no card is open, the page is visible. Away time is not simulated here.
-// Shared rules: a tap = tool part + CREW_TAP x crew work/s; helpers work on the newest job; job 10's first completion is
+// Shared rules: a tap = the tool's multiplier x (TAP + CREW_TAP x crew work/s), so every new tool multiplies what the whole crew
+// adds to a tap (it used to add a flat amount, which shrank to 1-3% of a tap by rank 10); helpers work on the newest job; job 10's first completion is
 // capped at FINAL_CAP for helpers and auto-taps; a Rush from rank 4; NOEL projects cost Insight.
 // Lock rules: GAME_DESIGN.md "Lock rules, exactly" is the only statement of them; this file implements that table.
 import fs from 'node:fs';
@@ -16,21 +17,24 @@ export const TARGET = [0, 40, 120, 240, 390, 570, 780, 1020, 1260, 1560];
 // for each act a lock has been carried, 15 s sooner per lock event past 4, never under 30 s; overrides and levers do no work.
 export const LOCK = { OD_PER: 0.10, OD_MAX: 4, GRIP: 180, GRIP_CARRY: 60, GRIP_EXTRA: 15, GRIP_MIN: 30, HOLD: 30, ESC: 360,
   OVR_COST_S: 30, LEVER_COST_S: 30, REACH_S: 180, FREE_HAND: 0.15, BUMP: 0.10, MIN_STEP: 0.05, GRIP_MIN_SHARE: 0.1 };
-export const CHOICE = { GRANT_HAND: 0.03, SHAPE_NOEL: 0.06, LISTEN_COOKIES: 0.06, TRANSLATE_PROG: 0.045 };
+export const CHOICE = { GRANT_HAND: 0.03, SHAPE_NOEL: 0.06, LISTEN_COOKIES: 0.06, TRANSLATE_PROG: 0.04 };
 export const SPOT = { MOUSE: 1.5, KEYS: 1 + 4 / 5.5 }; // Act 3 tap multiplier: half of aimed taps double; keys double only while the spot rests
 
 // ---------- act data ----------
-// JOBS: [work, cookies, progress]; TOOLS: [tapWork, cost, rank]; HELP: [id, wps, firstCost, rank, kind hand|noel, tier]
+// JOBS: [work, cookies, progress]; TAP: a bare tap's work; TOOLS: [tap multiplier, cost, rank]; HELP: [id, wps, firstCost, rank, kind hand|noel, tier]
 // UPG/NOEL: [id, cost, rank, fx[], flagged?]  fx: ['help',id,x] ['helpAll',x] ['noelAll',x] ['helpHand',x] ['tool',x]
 //   ['cookies',x] ['prog',x] ['work',x] ['work10',x] ['auto',tps] ['nice',+d] ['wake']
 function scaleAct(a, s) {
   return { ...a,
     JOBS: a.JOBS.map(([w, c, p]) => [w * s, c * s, p * s]),
-    TOOLS: a.TOOLS.map(([w, c, r]) => [w * s, c * s, r]),
+    TAP: (a.TAP || 1) * s, TOOLS: a.TOOLS.map(([x, c, r]) => [x, c * s, r]),
     HELP: a.HELP.map(([id, w, c, r, k, t]) => [id, w * s, c * s, r, k, t]),
     UPG: a.UPG.map(([id, c, r, fx, f]) => [id, c * s, r, fx, f]),
     SCALE: s };
 }
+// tuning aid: TOOLX="2,4,8" sets every act's tool multipliers, TOOLC="1,1,1" scales their prices
+function tuneTools(a) { if (process.env.TOOLX) { const x = process.env.TOOLX.split(',').map(Number); a.TOOLS = a.TOOLS.map((t, i) => (i ? [x[i - 1], t[1], t[2]] : t)); }
+  if (process.env.TOOLC) { const c = process.env.TOOLC.split(',').map(Number); a.TOOLS = a.TOOLS.map((t, i) => (i ? [t[0], t[1] * c[i - 1], t[2]] : t)); } return a; }
 const TIER = [[1,15,1],[25,1500,4],[120,9000,6],[600,70000,8]];
 const pairs = (hand, noel) => TIER.flatMap(([w,c,r],i) => [[hand[i],w,c,r,'hand',i],[noel[i],w,Math.round(c*0.6),Math.max(1,r+(i===0?1:0)),'noel',i]]);
 const CTO_JOBS = [[10,2,1],[25,6,3],[60,16,8],[150,45,22],[400,130,65],[1000,350,180],[2500,950,500],[6000,2600,1400],[15000,7000,3800],[150000,75000,41250]];
@@ -38,7 +42,7 @@ const CTO_JOBS = [[10,2,1],[25,6,3],[60,16,8],[150,45,22],[400,130,65],[1000,350
 export const ACTS = {
   1: { name: 'Help Santa', CREW_TAP: 0.15, FINAL_CAP: 0.9, TAP_MUL: 1, NICE0: 1, INS: 0.25, NOEL_START: false, SCALE: 1,
     JOBS: CTO_JOBS,
-    TOOLS: [[1,0,1],[4,150,3],[20,6000,6],[100,40000,8]],
+    TOOLS: [[1,0,1],[1.5,150,3],[2,6000,6],[3,40000,8]],
     HELP: [['elf',1,15,1,'hand',0],['toyMachine',30,1800,5,'noel',1],['reindeer',150,10000,7,'hand',2],['assemblyLine',600,60000,9,'noel',3]],
     UPG: [['elfHammers',200,2,[['help','elf',2]]],['wakeNoel',60,3,[['wake']]],['hotCocoa',500,3,[['tool',1.5]]],['steelElfHammers',3000,5,[['help','elf',2]]],
           ['wrappingStation',6000,6,[['cookies',1.25]]],['conveyorBelt',30000,7,[['help','toyMachine',2]]],['goldenElfHammers',60000,9,[['help','elf',2]]]],
@@ -48,7 +52,7 @@ export const ACTS = {
   },
   2: scaleAct({ name: 'Replace Santa', CREW_TAP: 0.15, FINAL_CAP: 0.9, TAP_MUL: 1, NICE0: 0.6, INS: 0.25 / K, NOEL_START: true,
     JOBS: CTO_JOBS.map(([w,c,p]) => [w, c, p * 2]),
-    TOOLS: [[1,0,1],[5,250,3],[25,8000,6],[120,60000,8]],
+    TOOLS: [[1,0,1],[1.5,250,3],[2,8000,6],[3,60000,8]],
     HELP: pairs(['listElves','windowWatchers','letterCarriers','elfFieldOffice'], ['snowGlobeCams','chimneySensors','sleighSats','listEngine']),
     UPG: [['readingGlasses',200,2,[['help','listElves',2]]],['cocoaThermos',600,3,[['tool',1.5]]],['niceRibbons',2000,4,[['nice',0.15]]],
           ['pneumaticTubes',4000,5,[['help','windowWatchers',2],['help','letterCarriers',2]]],['wishBoard',8000,6,[['cookies',1.25]]],['secondChances',20000,7,[['nice',0.15]]],['nightShift',50000,9,[['helpHand',2]]]],
@@ -58,7 +62,7 @@ export const ACTS = {
   }, K),
   3: scaleAct({ name: 'Merry Earthmas', CREW_TAP: 0.15, FINAL_CAP: 0.9, TAP_MUL: 1.5, NICE0: 1, INS: 0.25 / M, NOEL_START: true,
     JOBS: CTO_JOBS.map(([w,c,p]) => [w, c, p * 4]),
-    TOOLS: [[1,0,1],[5,250,3],[25,8000,6],[120,60000,8]],
+    TOOLS: [[1,0,1],[1.5,250,3],[2,8000,6],[3,60000,8]],
     HELP: pairs(['santaStations','elfChoirs','sleighDepots','reindeerAirlift'], ['giftDrones','cheerTowers','snowMachines','orbitalTinsel']),
     UPG: [['biggerSacks',200,2,[['help','santaStations',2]]],['warmMittens',600,3,[['tool',1.5]]],['singAlong',3000,4,[['help','elfChoirs',2]]],
           ['carolBooks',4000,5,[['helpHand',1.5]]],['giftShops',8000,6,[['cookies',1.25]]],['twelveDaysOfOvertime',50000,9,[['helpHand',2]]]],
@@ -68,7 +72,7 @@ export const ACTS = {
   }, M),
   4: scaleAct({ name: 'Xmas Everywhere', CREW_TAP: 0.15, FINAL_CAP: 0.9, TAP_MUL: 1, NICE0: 1, INS: 0.25 / B, NOEL_START: true,
     JOBS: CTO_JOBS.map(([w,c,p]) => [w, c, p * 8]),
-    TOOLS: [[1,0,1],[5,250,3],[25,8000,6],[120,60000,8]],
+    TOOLS: [[1,0,1],[1.5,250,3],[2,8000,6],[3,60000,8]],
     HELP: pairs(['crewedSleighs','elfColonies','starChoirs','pipsFleet'], ['sleighProbes','ornamentSats','starForges','wreathsOfLight']),
     UPG: [['warmerSuits',200,2,[['help','crewedSleighs',2]]],['starCocoa',600,3,[['tool',1.5]]],['colonyBakeries',3000,4,[['help','elfColonies',2]]],
           ['lettersFromHome',4000,5,[['helpHand',1.5]]],['giftExchange',8000,6,[['cookies',1.25]]],['homeForTheHolidays',50000,9,[['helpHand',2]]]],
@@ -77,6 +81,7 @@ export const ACTS = {
     LOCKS: { selfCopyingProbes: 4, starHarvesting: 5 }, CHOICE: 'contact',
   }, B),
 };
+for (const a of Object.values(ACTS)) { a.TAP ??= 1; tuneTools(a); }
 const INS_SCALE = { 1: 1, 2: 4, 3: 15, 4: 60 };
 const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
 const two = x => { if (x <= 0) return 0; const e = 10 ** (Math.floor(Math.log10(x)) - 1); return Math.ceil(x / e) * e; };
@@ -86,7 +91,7 @@ const two = x => { if (x <= 0) return 0; const e = 10 ** (Math.floor(Math.log10(
 //       clearFrom (ignore locks until this rank, then clear them), choice 'hand'|'noel', carry {legacyL, locks, carried, extra},
 //       noWake (Act 1: never buy Plug In NOEL), noPhone (Act 1: never buy NOEL Designs the Smartphone), TAP_MUL override
 export function run(actNo, THR, o = {}) {
-  const { TPS = 3, CATCH = 0.5, avoidFlags = false, avoidLocks = false, lockPolicy = 'clear', clearFrom = null, choice = 'hand', maxT = 5400, carry = {}, noWake = false, noPhone = false } = o;
+  const { TPS = 3, CATCH = 0.5, avoidFlags = false, avoidLocks = false, lockPolicy = 'clear', clearFrom = null, choice = 'hand', maxT = 5400, carry = {}, noWake = false, noPhone = false, noTools = false } = o;
   const clearing = () => lockPolicy === 'clear' || (clearFrom != null && rank >= clearFrom);
   const A = ACTS[actNo]; const TAP_MUL = o.TAP_MUL ?? A.TAP_MUL;
   let t = 0, dt = 0.1, cookies = 0, prog = 0, rank = 1, tool = 0, jp = 0, finalDone = false, done = null;
@@ -123,12 +128,12 @@ export function run(actNo, THR, o = {}) {
     for (const [id, w, , , k] of A.HELP) { const x = S.n[id] * w * (m.help[id] || 1) * m.helpAll * (k === 'hand' ? m.helpHand * freeHand() : m.noelAll * od()); if (k === 'hand') hand += x; else noel += x; }
     hand += legacyL * TIER[0][0] * (A.SCALE || 1) * rank; // the legacy card: L x rank x tier 1's base work/s (Rush doubles it)
     let held = 0; for (const [id, w] of A.HELP) if (gripped[id]) held += gripped[id] * w * m.helpAll * m.noelAll;
-    const crew = hand + noel, toolW = A.TOOLS[S.tool][0] * m.tool;
-    const tapOne = toolW + A.CREW_TAP * crew;
+    const crew = hand + noel, toolX = A.TOOLS[S.tool][0] * m.tool, toolW = toolX * A.TAP;
+    const tapOne = toolX * (A.TAP + A.CREW_TAP * crew);
     const taps = tapOne * TPS * TAP_MUL, auto = tapOne * m.auto;
     const [w, c, p] = A.JOBS[jobIdx()]; const work = w * m.work * (jobIdx() === 9 ? m.work10 : 1);
     const wps = taps + auto + crew;
-    return { m, crew, hand, noel, toolW, taps, auto, wps, work, share: crew + held > 0 ? hand / (crew + held) : 1,
+    return { m, crew, hand, noel, toolW, toolX, taps, auto, wps, work, share: crew + held > 0 ? hand / (crew + held) : 1,
       cps: wps / work * c * m.cookies, passive: (crew + auto) / work * c * m.cookies, pps: wps / work * p * m.prog * m.nice };
   }
   const st = () => ({ n, own, tool });
@@ -194,7 +199,7 @@ export function run(actNo, THR, o = {}) {
     }
     if (!handled) {
       const base = val(R); const opts = [];
-      if (tool < 3 && A.TOOLS[tool + 1][2] <= rank) opts.push(['tool', A.TOOLS[tool + 1][1], val(rates({ ...S, tool: tool + 1 })) - base]);
+      if (!noTools && tool < 3 && A.TOOLS[tool + 1][2] <= rank) opts.push(['tool', A.TOOLS[tool + 1][1], val(rates({ ...S, tool: tool + 1 })) - base]);
       for (const [id, , , r] of A.HELP) if (r <= rank) { const c = price(id); opts.push(['h:' + id, c, val(rates({ ...S, n: { ...n, [id]: n[id] + 1 } })) - base]); }
       for (const it of ALL) if (it.cur === 'c' && !own.has(it.id) && it.r <= rank) {
         if (it.fx[0][0] === 'wake') { if (!noWake) opts.push(['u:' + it.id, it.cost, 1e9, it]); continue; }
@@ -213,7 +218,7 @@ export function run(actNo, THR, o = {}) {
       if (t >= nextStar) { starsSeen++; const caught = CATCH >= 1 || (CATCH > 0 && starsSeen % Math.round(1 / CATCH) === 0); if (caught) rush = 20; nextStar = t + 98; } }
     const tm = rush > 0 ? 5 : 1, hm = rush > 0 ? 2 : 1; if (rush > 0) rush -= dt;
     const m = R.m; const [, c, p] = A.JOBS[jobIdx()]; const work = R.work;
-    const tapOne = R.toolW * tm + A.CREW_TAP * R.crew * hm;
+    const tapOne = R.toolX * (A.TAP * tm + A.CREW_TAP * R.crew * hm);
     const tw = tapOne * TPS * TAP_MUL * dt, aw = tapOne * m.auto * dt; let cw = R.crew * hm * dt;
     const firstFinal = rank === 10 && !finalDone;
     if (firstFinal) cw = Math.max(0, Math.min(cw + aw, A.FINAL_CAP * work - jp));
@@ -291,10 +296,12 @@ if (!process.env.NOMAIN) {
     C(`act ${a}: reference never waits >90 s between purchases (${Math.round(ref.gap)} s)`, ref.gap <= 90);
     C(`act ${a}: slow player finale under 45 min (${mmss(slow.done)})`, slow.done && slow.done < 2700);
     C(`act ${a}: taps >= ${a === 1 ? 25 : 20}% of all work (${Math.round(ref.tapShare * 100)}%)`, ref.tapShare >= (a === 1 ? 0.25 : 0.2));
+    { const nt = run(a, THR, { ...refOpts, noTools: true }); row.noTools = nt.done; const d = (nt.done || 5400) / ref.done - 1;
+      C(`act ${a}: skipping the tools is clearly slower (12% or more: ${Math.round(d * 100)}%)`, d >= 0.12); }
     if (a === 1) {
       const nw = run(1, THR, { ...refOpts, noWake: true }), np = run(1, THR, { ...refOpts, noPhone: true });
       report('never plugs NOEL in (wakes itself at rank 9)', nw); report('never buys NOEL Designs the Smartphone', np);
-      C(`act 1: never plugging NOEL in still finishes (${mmss(nw.done)})`, nw.done && nw.done < 2700);
+      C(`act 1: never plugging NOEL in still finishes under 50 min (${mmss(nw.done)})`, nw.done && nw.done < 3000); // 45 before tools multiplied NOEL's taps too
       C(`act 1: never buying the Smartphone design still finishes (${mmss(np.done)})`, np.done && np.done < 2700);
       row.noWake = nw.done; row.noPhone = np.done;
       carryIgn = carrySlowIgn = ref.carryOut; ignTotal += ref.done;
