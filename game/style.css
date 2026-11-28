@@ -441,3 +441,7 @@ body.act4 .st-noel { color: var(--noel); } body.act4 .st-hand { color: #ff9a8a; 
 #center { min-width: 0; }
 .work-bar { min-width: 64px; }
 .job-name { min-width: 0; }
+/* the rank bar on narrow phones late in Act 4 ("92.2 Qa / 650 Qa"): shrink the label to fit rather than cut it */
+@container (max-width: 120px) { .prog-label { font-size: max(9px, min(11px, 10.2cqi)); letter-spacing: -0.2px; } }
+/* upright phones: the per-tap and per-second figures stack, leaving the rank bar room */
+@media (orientation: portrait) and (max-width: 560px) { #statRate { display: flex; flex-direction: column; align-items: flex-end; line-height: 1.05; font-size: 11px; } #statRate i { display: none; } }

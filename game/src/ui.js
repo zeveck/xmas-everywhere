@@ -98,7 +98,7 @@ export function update(S, extra = {}) {
   setIf('cookies', $('#statCookies span'), 'text', fmt(S.cookies));
   setIf('insHidden', $('#statInsight'), 'hidden', !S.woke);
   setIf('ins', $('#statInsight span'), 'text', fmt(S.insight));
-  const tapv = R.tapValue(S); setIf('rate', $('#statRate'), 'text', `${fmt(tapv)}/tap · ${fmt(RR.crew + RR.auto)}/s`);
+  const tapv = R.tapValue(S); setIf('rate', $('#statRate'), 'html', `<span>${fmt(tapv)}/tap</span><i> · </i><span>${fmt(RR.crew + RR.auto)}/s</span>`);
   const thr = THRESHOLDS[act]; let frac, label;
   if (S.rank < 10) { frac = (S.prog - thr[S.rank - 1]) / (thr[S.rank] - thr[S.rank - 1]); label = `<span class="rank-no">Rank ${S.rank} ·&nbsp;</span><span class="pl-word">${T.progress}&nbsp;</span>${fmt(S.prog)}&nbsp;/&nbsp;${fmt(thr[S.rank])}`; }
   else { frac = 1; label = `<span class="rank-no">Rank 10 ·&nbsp;</span>${fmt(S.prog)}<span class="pl-word">&nbsp;${T.progress}</span>`; }
