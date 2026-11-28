@@ -89,6 +89,6 @@ Act 4, Xmas Everywhere: find life in the
 Why: a tap = tool + 15% of crew work/s, so the tool's share of a tap fell to 1–3% by rank 10 in every act; skipping tools cost only 3–8% (sim, 6 taps/s). xmas-clicker #1 ("keep hiring elves rather than upgrade my hammer") applies here.
 - [x] Rule in tools/balance-draft.mjs + game/src/rules.js: tap = tool multiplier × (TAP + CREW_TAP × crew). Tried ×2/4/8 (skipping tools 180–250% slower: too much), settled ×1.5/×2/×3, prices kept (54–68% slower without tools). 92/92 checks (new: skipping tools ≥12% slower; Translate +4% was 4.5%; no-NOEL guard 50 min, was 45). Thresholds re-tuned; verify-rules within 2% (Act 1 rank 2 −5% as before).
 - [x] Tool rows "Every tap ×1.5" / "The one you start with"; Translate text from CHOICE; v1 saves keep their place in the rank on the new thresholds (main.js migrate); Rush countdown order as in the sim; GAME_DESIGN, BALANCE (regenerated), README
-- [ ] Snapshots rebuilt (verify-rules --snap; --carried with ignore). Replays round 1: 40/40 PASS (.gamegen/elves/round1). Fresh review: 3 findings, all fixed. Round 2 + whole-game run: running
+- [x] Snapshots rebuilt (verify-rules --snap; --carried with ignore). Replays round 1: 40/40 PASS (.gamegen/elves/round1). Fresh review: 3 findings, all fixed. Round 2 on final code: 40/40 PASS. Whole-game run (title to the end, real input, 10 taps/s): won in 51:44 (was 58:28). Carried-lock ignorer: Act 4 act-win, no Switch NOEL Off (as designed). Six-size sweep clean after stacking the phone rate figures (rank bar numbers grew)
 - [ ] Publish
 
